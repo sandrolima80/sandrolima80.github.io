@@ -189,16 +189,17 @@
 </head>
 <body>
 
-    <!-- JANELA DE SOLICITAÇÃO DE CEP -->
-    <div class="modal-cep-overlay" id="modal-cep">
-        <div class="modal-cep-content">
+        <!-- JANELA DE SOLICITAÇÃO DE CEP (CORRIGIDA) -->
+    <div class="modal-cep-overlay" id="modal-cep" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0b0b0b; display: flex; justify-content: center; align-items: center; z-index: 9999;">
+        <div class="modal-cep-content" style="background-color: #1a1a1a; border: 2px solid #333; border-radius: 12px; padding: 30px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.7);">
             <h2>Bem-vindo à Rota Réplicas</h2>
             <p>Digite seu CEP para calcular o frete e somar aos produtos automaticamente.</p>
-            <input type="text" id="cep-inicial" placeholder="00000-000" maxlength="9" oninput="monitorarDigitacaoCEP(this)">
-            <span class="modal-status" id="modal-erro">Aguardando CEP...</span>
-            <button type="button" class="btn-pular" onclick="pularCep()">Visualizar catálogo sem frete</button>
+            <input type="text" id="cep-inicial" placeholder="00000-000" maxlength="9" oninput="monitorarDigitacaoCEP(this)" style="width: 80%; padding: 12px; border-radius: 8px; background-color: #2b2b2b; color: #fff; border: 1px solid #444; font-size: 1.3em; text-align: center; letter-spacing: 2px; margin-bottom: 15px;">
+            <span class="modal-status" id="modal-erro" style="font-size: 0.9em; color: #aaa; display: block; min-height: 20px;">Aguardando CEP...</span>
+            <button type="button" class="btn-pular" onclick="pularCep()" style="display: block; margin: 15px auto 0 auto; background: none; border: none; color: #009ee3; cursor: pointer; text-decoration: underline; font-size: 1em; font-weight: bold;">Visualizar catálogo sem frete</button>
         </div>
     </div>
+
 
     <!-- CONTEÚDO PRINCIPAL DO SITE -->
     <header>
