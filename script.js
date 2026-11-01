@@ -114,17 +114,58 @@
         
         atualizarTodosOsProdutos(0, "", "");
                 // Funções para controle do Zoom da Imagem (Lightbox)
-        function abrirZoom(elementoImg) {
-            const lightbox = document.getElementById('lightbox');
-            const imagemZoom = document.getElementById('imagem-zoom');
-            
-            // Passa o caminho da imagem clicada para a janela grande
-            imagemZoom.src = elementoImg.src;
-            imagemZoom.alt = elementoImg.alt;
-            
-            // Exibe a janela de zoom
-            lightbox.style.display = 'flex';
-        }
+        
+       // VARIÁVEIS LOCAIS PARA CONTROLE DO CARROSSEL DE ZOOM
+let imagensProdutosLista = [];
+let indiceImagemAtual = 0;
+
+// Funções do Lightbox (Zoom da Imagem com Rotação Esquerda/Direita)
+function abrirZoom(elementoImg) {
+    const lightbox = document.getElementById('lightbox');
+    const imagemZoom = document.getElementById('imagem-zoom');
+    
+    // Captura em tempo real todas as imagens de produtos disponíveis no catálogo
+    const todasAsImagens = document.querySelectorAll('.class-produto img');
+    imagensProdutosLista = Array.from(todasAsImagens);
+    
+    // Descobre qual imagem foi clicada para iniciar o carrossel a partir dela
+    indiceImagemAtual = imagensProdutosLista.indexOf(elementoImg);
+    
+    // Alimenta o zoom com a foto atual
+    imagemZoom.src = elementoImg.src;
+    imagemZoom.alt = elementoImg.alt;
+    
+    lightbox.style.display = 'flex';
+}
+
+// Controla a rotação para direita (1) ou esquerda (-1)
+function mudarImagemZoom(direcao, evento) {
+    // Evita que o clique na seta feche a janela preta de fundo
+    evento.stopPropagation();
+    
+    // Faz o cálculo matemático de rotação infinita
+    indiceImagemAtual += direcao;
+    
+    // Se passar da última imagem, volta para a primeira (Direita)
+    if (indiceImagemAtual >= imagensProdutosLista.length) {
+        indiceImagemAtual = 0;
+    }
+    // Se voltar antes da primeira imagem, vai para a última (Esquerda)
+    if (indiceImagemAtual < 0) {
+        indiceImagemAtual = imagensProdutosLista.length - 1;
+    }
+    
+    // Atualiza a imagem exibida no zoom
+    const novaImagem = imagensProdutosLista[indiceImagemAtual];
+    const imagemZoom = document.getElementById('imagem-zoom');
+    imagemZoom.src = novaImagem.src;
+    imagemZoom.alt = novaImagem.alt;
+}
+
+function fecharZoom() {
+    document.getElementById('lightbox').style.display = 'none';
+}
+
 
         function fecharZoom() {
             // Esconde a janela ao clicar fora da imagem
