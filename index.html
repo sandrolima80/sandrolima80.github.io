@@ -5,6 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rota Réplicas - Peças e Customizações 1:14</title>
     <style>
+        /* Estilos da Tela de Bloqueio (Modal de CEP) */
+        .modal-cep-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0b0b0b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        .modal-cep-content {
+            background-color: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+        }
+        .modal-cep-content h2 {
+            margin-top: 0;
+            color: #fff;
+            font-size: 1.6em;
+        }
+        .modal-cep-content p {
+            color: #aaa;
+            font-size: 0.95em;
+            margin-bottom: 20px;
+        }
+        .modal-input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .modal-cep-content input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            background-color: #2b2b2b;
+            color: #fff;
+            border: 1px solid #444;
+            font-size: 1.1em;
+            text-align: center;
+        }
+        .modal-cep-content button {
+            padding: 12px 20px;
+            background-color: #009ee3;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: background 0.2s;
+        }
+        .modal-cep-content button:hover {
+            background-color: #0081ba;
+        }
+        .modal-status {
+            font-size: 0.9em;
+            color: #ff6b6b;
+            display: block;
+            min-height: 20px;
+        }
+
+        /* Estrutura Principal do Site */
         body {
             font-family: Arial, sans-serif;
             background-color: #111;
@@ -48,8 +119,12 @@
             border-radius: 12px;
             padding: 20px;
             max-width: 340px;
+            width: 100%;
             text-align: center;
             box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         .produto-card img {
             max-width: 100%;
@@ -69,64 +144,26 @@
             min-height: 60px;
             line-height: 1.4;
             text-align: left;
+            margin-bottom: 15px;
         }
         
-        /* Seção do cálculo de frete por CEP */
-        .secao-cep {
+        /* Informações do Frete Gravado no Card */
+        .info-frete-card {
             background-color: #222;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            text-align: left;
-            border: 1px solid #444;
-        }
-        .secao-cep label {
-            display: block;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
             font-size: 0.9em;
-            color: #ccc;
-            margin-bottom: 5px;
+            color: #00b159;
+            border: 1px solid #333;
             font-weight: bold;
-        }
-        .input-container {
-            display: flex;
-            gap: 8px;
-        }
-        .secao-cep input {
-            flex: 1;
-            padding: 8px;
-            border-radius: 6px;
-            background-color: #333;
-            color: #fff;
-            border: 1px solid #555;
-            font-size: 1em;
-            text-align: center;
-        }
-        .secao-cep button {
-            padding: 8px 15px;
-            background-color: #009ee3;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.2s;
-        }
-        .secao-cep button:hover {
-            background-color: #0081ba;
-        }
-        .status-frete {
-            font-size: 0.85em;
-            margin-top: 8px;
-            color: #aaa;
-            display: block;
-            min-height: 18px;
         }
 
         .preco {
             font-size: 1.8em;
             font-weight: bold;
             color: #fff;
-            margin: 15px 0 15px 0;
+            margin: 10px 0 15px 0;
         }
         .btn-mercado-pago {
             color: white;
@@ -154,6 +191,20 @@
 </head>
 <body>
 
+    <!-- JANELA DE SOLICITAÇÃO DE CEP (APARECE ANTES DE TUDO) -->
+    <div class="modal-cep-overlay" id="modal-cep">
+        <div class="modal-cep-content">
+            <h2>Bem-vindo à Rota Réplicas</h2>
+            <p>Por favor, informe seu CEP para calcular o frete e visualizar os valores totais dos produtos.</p>
+            <div class="modal-input-container">
+                <input type="text" id="cep-inicial" placeholder="00000-000" maxlength="9" oninput="mascaraCEP(this)">
+                <button type="button" onclick="processarCEPEntrada()">Entrar</button>
+            </div>
+            <span class="modal-status" id="modal-erro"></span>
+        </div>
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL DO SITE -->
     <header>
         <img src="logo.png" alt="Rota Réplicas Logo">
         <h1>Rota Réplicas</h1>
@@ -162,34 +213,42 @@
 
     <main class="catalogo">
 
-        <!-- PRODUTO: TANQUE DE COMBUSTÍVEL -->
-        <div class="produto-card">
-            <img src="tanque-114.jpg" alt="Tanque de Combustível Cromado 1:14">
-            <h2>Tanque de Combustível Cromado - Escala 1:14</h2>
-            <p class="descricao">Fabricado em ABS de alta resistência com acabamento cromado espelhado de alto brilho. Acompanha suportes em cinta flexível (TPU) e parafusos reais para fixação no chassi.</p>
-            
-            <!-- CALCULADORA DE CEP INTEGRADA -->
-            <div class="secao-cep">
-                <label for="cep">Calcular Frete (Digite seu CEP):</label>
-                <div class="input-container">
-                    <input type="text" id="cep" placeholder="00000-000" maxlength="9" oninput="mascaraCEP(this)">
-                    <button type="button" onclick="consultarFrete()">Calcular</button>
-                </div>
-                <span class="status-frete" id="status-frete">Insira seu CEP para somar o valor final.</span>
+        <!-- PRODUTO 1: TANQUE DE COMBUSTÍVEL -->
+        <!-- O segredo está nos atributos data-preco, data-link-cartao e data-link-pix -->
+        <div class="produto-card class-produto" 
+             data-preco="100.00" 
+             data-link-cartao="https://mercadopago.com.br" 
+             data-link-pix="https://mercadopago.com.br">
+            <div>
+                <img src="tanque-114.jpg" alt="Tanque de Combustível Cromado 1:14">
+                <h2>Tanque de Combustível Cromado - Escala 1:14</h2>
+                <p class="descricao">Fabricado em ABS de alta resistência com acabamento cromado espelhado de alto brilho. Acompanha suportes em cinta flexível (TPU) e parafusos reais.</p>
             </div>
-            
-            <!-- VALOR FINAL MUDANDO AUTOMATICAMENTE -->
-            <div class="preco" id="preco-exibido">R$ 100,00</div>
-            
-            <!-- BOTÃO CARTÃO -->
-            <a id="btn-cartao" href="COLE_SEU_LINK_DO_CARTAO_AQUI" target="_blank" class="btn-mercado-pago" style="background-color: #009ee3; margin-bottom: 12px;">
-                💳 Comprar no Cartão em até 10x
-            </a>
+            <div>
+                <div class="info-frete-card info-frete-texto">🚚 Calculando frete...</div>
+                <div class="preco preco-texto">R$ 100,00</div>
+                <a href="#" target="_blank" class="btn-mercado-pago btn-cartao" style="background-color: #009ee3; margin-bottom: 12px;">💳 Comprar no Cartão</a>
+                <a href="#" target="_blank" class="btn-mercado-pago btn-pix" style="background-color: #00b159;">🟢 Pagar no Pix</a>
+            </div>
+        </div>
 
-            <!-- BOTÃO PIX -->
-            <a id="btn-pix" href="COLE_SEU_LINK_DO_PIX_AQUI" target="_blank" class="btn-mercado-pago" style="background-color: #00b159;">
-                🟢 Pagar no Pix com Desconto
-            </a>
+        <!-- PRODUTO 2: EXEMPLO DE PRODUTO ADICIONAL (Para-lamas) -->
+        <!-- Quando quiser criar o Produto 3, basta copiar este bloco abaixo e trocar os valores e links -->
+        <div class="produto-card class-produto" 
+             data-preco="85.00" 
+             data-link-cartao="https://mercadopago.com.br" 
+             data-link-pix="https://mercadopago.com.br">
+            <div>
+                <img src="paralamas-114.jpg" alt="Par de Para-lamas Traseiros 1:14">
+                <h2>Par de Para-lamas Traseiros - Escala 1:14</h2>
+                <p class="descricao">Modelagem exclusiva com acabamento fosco realista. Compatível com chassi padrão Tamiya. Alta flexibilidade para aguentar impactos.</p>
+            </div>
+            <div>
+                <div class="info-frete-card info-frete-texto">🚚 Calculando frete...</div>
+                <div class="preco preco-texto">R$ 85,00</div>
+                <a href="#" target="_blank" class="btn-mercado-pago btn-cartao" style="background-color: #009ee3; margin-bottom: 12px;">💳 Comprar no Cartão</a>
+                <a href="#" target="_blank" class="btn-mercado-pago btn-pix" style="background-color: #00b159;">🟢 Pagar no Pix</a>
+            </div>
         </div>
 
     </main>
@@ -200,18 +259,11 @@
     </footer>
 
     <script>
-        // Configuração Base do Produto
-        const precoProduto = 100.00;
-        const descontoPix = 0.10; // 10% de desconto no item
+        const descontoPix = 0.10; // 10% de desconto no valor do produto
 
-        // Altere aqui pelos links reais da sua conta Mercado Pago
-        const linkBaseCartao = "https://mercadopago.com.br";
-        const linkBasePix = "https://mercadopago.com.br";
-
-        // Tabela de Preços Fixos de Frete baseados no Estado da consulta
+        // Tabela de frete fixo por estado (mesmo peso para todos os produtos)
         const tabelaFretePorEstado = {
-            'SP': 15.00, // Definido como R$ 15,00 para igualar o comportamento da sua imagem de teste
-            'RJ': 25.00, 'MG': 25.00, 'ES': 25.00,
+            'SP': 15.00, 'RJ': 25.00, 'MG': 25.00, 'ES': 25.00,
             'PR': 32.00, 'SC': 32.00, 'RS': 32.00,
             'DF': 35.00, 'GO': 35.00, 'MT': 35.00, 'MS': 35.00,
             'BA': 40.00, 'CE': 42.00, 'PE': 42.00, 'MA': 45.00, 'PB': 45.00, 'PI': 45.00, 'RN': 45.00, 'SE': 45.00, 'AL': 45.00,
@@ -226,58 +278,56 @@
             input.value = v;
         }
 
-        async function consultarFrete() {
-            const cepInput = document.getElementById('cep').value.replace(/\D/g, "");
-            const statusTxt = document.getElementById('status-frete');
-
-            if (cepInput.length !== 8) {
-                statusTxt.style.color = "#ff6b6b";
-                statusTxt.innerText = "⚠️ Digite um CEP válido com 8 dígitos.";
-                return;
-            }
-
-            statusTxt.style.color = "#aaa";
-            statusTxt.innerText = "🔍 Buscando CEP...";
-
-            try {
-                const resposta = await fetch(`https://brasilapi.com.br{cepInput}`);
-                if (!resposta.ok) throw new Error();
-
-                const dados = await resposta.json();
-                const uf = dados.state;
-                const cidade = dados.city;
-
-                const valorFrete = tabelaFretePorEstado[uf] || 35.00;
-
-                statusTxt.style.color = "#00b159";
-                statusTxt.innerText = `🚚 Envio para ${cidade} - ${uf}: R$ ${valorFrete.toFixed(2).replace('.', ',')}`;
-
-                atualizarValores(valorFrete);
-
-            } catch (erro) {
-                statusTxt.style.color = "#ff6b6b";
-                statusTxt.innerText = "❌ CEP não encontrado. Verifique os números.";
-            }
-        }
-
-        function atualizarValores(valorFrete) {
-            const totalCartao = precoProduto + valorFrete;
-            const totalPix = (precoProduto * (1 - descontoPix)) + valorFrete;
-            
-            document.getElementById('preco-exibido').innerText = `R$ ${totalCartao.toFixed(2).replace('.', ',')}`;
-            
-            const valorParcela = totalCartao / 10;
-            document.getElementById('btn-cartao').innerHTML = `💳 Comprar em até 10x de R$ ${valorParcela.toFixed(2).replace('.', ',')} sem juros`;
-            document.getElementById('btn-pix').innerHTML = `🟢 Pagar no Pix por R$ ${totalPix.toFixed(2).replace('.', ',')}`;
-
-            document.getElementById('btn-cartao').href = `${linkBaseCartao}?price=${totalCartao}`;
-            document.getElementById('btn-pix').href = `${linkBasePix}?price=${totalPix}`;
-        }
-
-        // Carrega exibindo apenas o valor padrão do item inicial
-        atualizarValores(0);
-    </script>
-
-</body>
-</html>
+        async function processarCEPEntrada() {
+            const cepInput = document.getElementById('cep-inicial').value.replace(/\D/g, "");
+            const erroTxt = document.getElementById('modal-erro');
+const btnModal = document.querySelector('.modal-cep-content button');
+if (cepInput.length !== 8) {
+erroTxt.style.color = "#ff6b6b";
+erroTxt.innerText = "⚠️ Digite um CEP válido com 8 dígitos.";
+return;
+}
+erroTxt.style.color = "#aaa";
+erroTxt.innerText = "🔍 Verificando frete...";
+btnModal.disabled = true;
+try {
+const resposta = await fetch(https://brasilapi.com.br{cepInput});
+if (!resposta.ok) throw new Error();
+const dados = await resposta.json();
+const uf = dados.state;
+const cidade = dados.city;
+const valorFreteFinal = tabelaFretePorEstado[uf] || 35.00;
+// Executa a atualização em cascata para todos os produtos da página
+atualizarTodosOsProdutos(valorFreteFinal, cidade, uf);
+// Fecha a janela de CEP
+const modal = document.getElementById('modal-cep');
+modal.style.opacity = '0';
+modal.style.visibility = 'hidden';
+} catch (erro) {
+erroTxt.style.color = "#ff6b6b";
+erroTxt.innerText = "❌ CEP inválido ou não encontrado.";
+btnModal.disabled = false;
+}
+}
+// Nova função inteligente que varre a página e calcula o valor de cada item individualmente
+function atualizarTodosOsProdutos(valorFrete, cidade, uf) {
+const produtos = document.querySelectorAll('.class-produto');
+produtos.forEach(produto => {
+// Captura as configurações individuais salvas nas tags do produto
+const precoProduto = parseFloat(produto.getAttribute('data-preco'));
+const linkBaseCartao = produto.getAttribute('data-link-cartao');
+const linkBasePix = produto.getAttribute('data-link-pix');
+// Cálculos matemáticos individuais
+const totalCartao = precoProduto + valorFrete;
+const totalPix = (precoProduto * (1 - descontoPix)) + valorFrete;
+const valorParcela = totalCartao / 10;
+// Atualiza os elementos visuais internos deste produto específico
+produto.querySelector('.info-frete-texto').innerText = 🚚 Frete para ${cidade} - ${uf}: R$ ${valorFrete.toFixed(2).replace('.', ',')};
+produto.querySelector('.preco-texto').innerText = R$ ${totalCartao.toFixed(2).replace('.', ',')};
+produto.querySelector('.btn-cartao').innerHTML = 💳 Comprar em até 10x de R$ ${valorParcela.toFixed(2).replace('.', ',')} sem juros;
+produto.querySelector('.btn-cartao').href = ${linkBaseCartao}?price=${totalCartao};
+produto.querySelector('.btn-pix').innerHTML = 🟢 Pagar no Pix por R$ ${totalPix.toFixed(2).replace('.', ',')};
+produto.querySelector('.btn-pix').href = ${linkBasePix}?price=${totalPix};
+});
+}
 
