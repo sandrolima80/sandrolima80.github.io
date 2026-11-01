@@ -1,13 +1,10 @@
 
-   // CONFIGURAÇÕES BASE DO E-COMMERCE
+  // CONFIGURAÇÕES BASE DO E-COMMERCE
 const descontoPix = 0.10;
 let valorFreteGlobal = 0;
 
-// INICIALIZAÇÃO DO MERCADO PAGO
-// Substitua o texto abaixo pela sua Public Key real gerada no seu painel do Mercado Pago
-const mp = new MercadoPago('APP_USR-8477fe81-98de-40ce-ab2e-4e1b93a3d204', {
-    locale: 'pt-BR'
-});
+// INSERÇÃO DA SUA PUBLIC KEY (Substitua pelo seu código copiado do painel)
+const SUA_PUBLIC_KEY = 'APP_USR-8477fe81-98de-40ce-ab2e-4e1b93a3d204';
 
 const tabelaFretePorEstado = {
     'SP': 15.00, 'RJ': 25.00, 'MG': 25.00, 'ES': 25.00,
@@ -104,58 +101,29 @@ function atualizarTodosOsProdutos(valorFrete, regiao, uf) {
         produto.querySelector('.info-frete-texto').innerText = txtFrete;
         produto.querySelector('.preco-texto').innerText = `R$ ${totalCartao.toFixed(2).replace('.', ',')}`;
         
-        // Atualiza o texto dos botões na vitrine
         const btnCartao = produto.querySelector('.btn-cartao');
         const btnPix = produto.querySelector('.btn-pix');
         
         btnCartao.innerHTML = `💳 Comprar em até 10x de R$ ${valorParcela.toFixed(2).replace('.', ',')} sem juros`;
         btnPix.innerHTML = `🟢 Pagar no Pix por R$ ${totalPix.toFixed(2).replace('.', ',')}`;
 
-        // Vincula a ação de pagamento dinâmico ao clique dos botões
-        btnCartao.onclick = (e) => { e.preventDefault(); dispararCheckoutMercadoPago(produto, 'cartao'); };
-        btnPix.onclick = (e) => { e.preventDefault(); dispararCheckoutMercadoPago(produto, 'pix'); };
+        // Redirecionamento limpo para o ambiente seguro do Mercado Pago repassando o total calculado
+        const linkBaseCartao = produto.getAttribute('data-link-cartao');
+        const linkBasePix = produto.getAttribute('data-link-pix');
+
+        btnCartao.href = `${linkBaseCartao}?pref_id=${SUA_PUBLIC_KEY}&amount=${totalCartao.toFixed(2)}`;
+        btnPix.href = `${linkBasePix}?pref_id=${SUA_PUBLIC_KEY}&amount=${totalPix.toFixed(2)}`;
     });
 }
 
-// INICIALIZAÇÃO DA PREFERÊNCIA DINÂMICA VIA SDK
-function dispararCheckoutMercadoPago(elementoProduto, formaPagamento) {
-    const nomeItem = elementoProduto.querySelector('h2').innerText;
-    const precoBase = parseFloat(elementoProduto.getAttribute('data-preco'));
-    
-    // Calcula o valor final exato correspondente ao botão clicado
-    const valorFinalCalculado = formaPagamento === 'pix' 
-        ? (precoBase * (1 - descontoPix)) + valorFreteGlobal 
-        : precoBase + valorFreteGlobal;
-
-    // Estrutura a requisição seguindo os parâmetros do SDK do Mercado Pago
-    const dadosPreferencia = {
-        items: [{
-            title: nomeItem,
-            unit_price: valorFinalCalculado,
-            quantity: 1,
-            currency_id: 'BRL'
-        }],
-        payment_methods: {
-            excluded_payment_types: formaPagamento === 'pix' 
-                ? [{ id: 'ticket' }, { id: 'credit_card' }, { id: 'debit_card' }] // Trava apenas para PIX se for o caso
-                : []
-        }
-    };
-
-    // Cria a abertura nativa do checkout do Mercado Pago com o valor correto somado
-    mp.checkout({
-        preference: dadosPreferencia,
-        autoOpen: true // Abre a tela de pagamento imediatamente por cima do seu site
-    });
-}
-
-// Funções do Lightbox (Zoom)
+// LÓGICA DO ZOOM (LIGHTBOX) TOTALMENTE RESTAURADA E FUNCIONAL
 let imagensProdutosLista = [];
 let indiceImagemAtual = 0;
 
 function abrirZoom(elementoImg) {
     const lightbox = document.getElementById('lightbox');
     const imagemZoom = document.getElementById('imagem-zoom');
+    
     const todasAsImagens = document.querySelectorAll('.class-produto img');
     imagensProdutosLista = Array.from(todasAsImagens);
     indiceImagemAtual = imagensProdutosLista.indexOf(elementoImg);
@@ -184,5 +152,6 @@ function fecharZoom() {
 
 // Inicializa a vitrine
 atualizarTodosOsProdutos(0, "", "");
+
 
     
