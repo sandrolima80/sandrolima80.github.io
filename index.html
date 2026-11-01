@@ -191,7 +191,7 @@
 </head>
 <body>
 
-    <!-- JANELA DE SOLICITAÇÃO DE CEP (APARECE ANTES DE TUDO) -->
+    <!-- JANELA DE SOLICITAÇÃO DE CEP -->
     <div class="modal-cep-overlay" id="modal-cep">
         <div class="modal-cep-content">
             <h2>Bem-vindo à Rota Réplicas</h2>
@@ -214,7 +214,6 @@
     <main class="catalogo">
 
         <!-- PRODUTO 1: TANQUE DE COMBUSTÍVEL -->
-        <!-- O segredo está nos atributos data-preco, data-link-cartao e data-link-pix -->
         <div class="produto-card class-produto" 
              data-preco="100.00" 
              data-link-cartao="https://mercadopago.com.br" 
@@ -227,13 +226,12 @@
             <div>
                 <div class="info-frete-card info-frete-texto">🚚 Calculando frete...</div>
                 <div class="preco preco-texto">R$ 100,00</div>
-                <a href="#" target="_blank" class="btn-mercado-pago btn-cartao" style="background-color: #009ee3; margin-bottom: 12px;">💳 Comprar no Cartão</a>
+                <a href="#" target="_blank" class="btn-mercado-pago btn-cartao" style="background-color: #009ee3; margin-bottom: 12px;">¼ Comprar no Cartão</a>
                 <a href="#" target="_blank" class="btn-mercado-pago btn-pix" style="background-color: #00b159;">🟢 Pagar no Pix</a>
             </div>
         </div>
 
         <!-- PRODUTO 2: EXEMPLO DE PRODUTO ADICIONAL (Para-lamas) -->
-        <!-- Quando quiser criar o Produto 3, basta copiar este bloco abaixo e trocar os valores e links -->
         <div class="produto-card class-produto" 
              data-preco="85.00" 
              data-link-cartao="https://mercadopago.com.br" 
@@ -261,7 +259,7 @@
     <script>
         const descontoPix = 0.10; // 10% de desconto no valor do produto
 
-        // Tabela de frete fixo por estado (mesmo peso para todos os produtos)
+        // Tabela de frete fixo por estado
         const tabelaFretePorEstado = {
             'SP': 15.00, 'RJ': 25.00, 'MG': 25.00, 'ES': 25.00,
             'PR': 32.00, 'SC': 32.00, 'RS': 32.00,
@@ -281,11 +279,12 @@
         async function processarCEPEntrada() {
             const cepInput = document.getElementById('cep-inicial').value.replace(/\D/g, "");
             const erroTxt = document.getElementById('modal-erro');
-const btnModal = document.querySelector('.modal-cep-content button');
-if (cepInput.length !== 8) {
-erroTxt.style.color = "#ff6b6b";
-erroTxt.innerText = "⚠️ Digite um CEP válido com 8 dígitos.";
-return;
+            const btnModal = document.querySelector('.modal-cep-content button');
+
+            if (cepInput.length !== 8) {
+                erroTxt.style.color = "#ff6b6b";
+                erroTxt.innerText = "⚠️ Digite um CEP válido com 8 dígitos.";
+                return;
 }
 erroTxt.style.color = "#aaa";
 erroTxt.innerText = "🔍 Verificando frete...";
@@ -297,9 +296,9 @@ const dados = await resposta.json();
 const uf = dados.state;
 const cidade = dados.city;
 const valorFreteFinal = tabelaFretePorEstado[uf] || 35.00;
-// Executa a atualização em cascata para todos os produtos da página
+// Atualiza todos os produtos
 atualizarTodosOsProdutos(valorFreteFinal, cidade, uf);
-// Fecha a janela de CEP
+// Fecha o modal limpando a tela travada
 const modal = document.getElementById('modal-cep');
 modal.style.opacity = '0';
 modal.style.visibility = 'hidden';
@@ -309,19 +308,15 @@ erroTxt.innerText = "❌ CEP inválido ou não encontrado.";
 btnModal.disabled = false;
 }
 }
-// Nova função inteligente que varre a página e calcula o valor de cada item individualmente
 function atualizarTodosOsProdutos(valorFrete, cidade, uf) {
 const produtos = document.querySelectorAll('.class-produto');
 produtos.forEach(produto => {
-// Captura as configurações individuais salvas nas tags do produto
 const precoProduto = parseFloat(produto.getAttribute('data-preco'));
 const linkBaseCartao = produto.getAttribute('data-link-cartao');
 const linkBasePix = produto.getAttribute('data-link-pix');
-// Cálculos matemáticos individuais
 const totalCartao = precoProduto + valorFrete;
 const totalPix = (precoProduto * (1 - descontoPix)) + valorFrete;
 const valorParcela = totalCartao / 10;
-// Atualiza os elementos visuais internos deste produto específico
 produto.querySelector('.info-frete-texto').innerText = 🚚 Frete para ${cidade} - ${uf}: R$ ${valorFrete.toFixed(2).replace('.', ',')};
 produto.querySelector('.preco-texto').innerText = R$ ${totalCartao.toFixed(2).replace('.', ',')};
 produto.querySelector('.btn-cartao').innerHTML = 💳 Comprar em até 10x de R$ ${valorParcela.toFixed(2).replace('.', ',')} sem juros;
@@ -330,4 +325,3 @@ produto.querySelector('.btn-pix').innerHTML = 🟢 Pagar no Pix por R$ ${totalPi
 produto.querySelector('.btn-pix').href = ${linkBasePix}?price=${totalPix};
 });
 }
-
