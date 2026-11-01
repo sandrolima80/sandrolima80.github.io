@@ -94,29 +94,32 @@ function atualizarTodosOsProdutos(valorFrete, regiao, uf) {
     produtos.forEach((produto, index) => {
         const precoProduto = parseFloat(produto.getAttribute('data-preco'));
         
-        // 1. CÁLCULO DO CARTÃO: (Produto + Frete)
+        // CÁLCULOS DOS VALORES
         const totalCartao = precoProduto + valorFrete;
         const valorPrestacao = totalCartao / 10;
-        
-        // 2. CÁLCULO DO PIX SOLICITADO: Desconto em cima do resultado da soma (Produto + Frete)
         const totalPix = totalCartao * (1 - descontoPix);
 
-        // Identificadores das linhas baseado no index do produto
         const pNum = index + 1;
         
-        // Atualiza as linhas de texto solicitadas por você
-        document.getElementById(`linha-cartao-p${pNum}`).innerText = `Valor em 10x sem juros: R$ ${totalCartao.toFixed(2).replace('.', ',')} (10x de R$ ${valorPrestacao.toFixed(2).replace('.', ',')})`;
-        document.getElementById(`linha-pix-p${pNum}`).innerText = `No Pix 10% de desconto: R$ ${totalPix.toFixed(2).replace('.', ',')}`;
+        // 1. Atualiza o Preço Base em destaque (Valor apenas da peça)
+        document.getElementById(`preco-base-p${pNum}`).innerText = `Peça: R$ ${precoProduto.toFixed(2).replace('.', ',')}`;
 
-        // 3. Linha do valor do frete
+        // 2. Linha do valor do frete (abaixo do preço base)
         const txtFrete = valorFrete === 0 ? "🚚 Valor do frete: A combinar / Grátis" : `🚚 Valor do frete para ${regiao} (${uf}): R$ ${valorFrete.toFixed(2).replace('.', ',')}`;
         produto.querySelector('.info-frete-texto').innerText = txtFrete;
 
-        // Força a atualização do link do botão baseado na escolha ativa
+        // 3. Linha do Cartão com parcelas
+        document.getElementById(`linha-cartao-p${pNum}`).innerText = `Valor em 10x sem juros: R$ ${totalCartao.toFixed(2).replace('.', ',')} (10x de R$ ${valorPrestacao.toFixed(2).replace('.', ',')})`;
+        
+        // 4. Última linha: Pix com desconto total
+        document.getElementById(`linha-pix-p${pNum}`).innerText = `No Pix 10% de desconto: R$ ${totalPix.toFixed(2).replace('.', ',')}`;
+
+        // Força a atualização do link de pagamento com base na escolha do cliente
         const seletorAtivo = produto.querySelector(`input[name="forma-pago-p${pNum}"]:checked`);
         forçarLinkBotaoUnico(produto, seletorAtivo ? seletorAtivo.value : 'cartao');
     });
 }
+
 
 // Monitora qual bolinha o cliente marcou e troca o link do botão na hora
 function atualizarBotaoUnico(elementoRadio) {
