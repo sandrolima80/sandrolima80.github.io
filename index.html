@@ -57,36 +57,40 @@
 
 
 
-    <main class="catalogo">
+       <main class="catalogo">
 
         <!-- PRODUTO 1: TANQUE DE COMBUSTÍVEL -->
-<div class="produto-card class-produto" 
-     data-preco="100.00" 
-     data-link-cartao="https://mercadopago.com.br" 
-     data-link-pix="https://mercadopago.com.br">
-    <div>
-        <!-- CONTAINER DA IMAGEM COM AS SETAS VISUAIS -->
-        <div class="container-foto-catalogo">
-            <span class="seta-visual visual-esquerda">&lsaquo;</span>
-            <img src="tanque_combustivel-1.jpg" alt="Tanque Cromado 1:14 - Vista Lateral" onclick="abrirZoom(this)">
-            <span class="seta-visual visual-direita">&rsaquo;</span>
-            
-            <!-- Imagens adicionais continuam aqui guardadas para o zoom -->
-            <img src="tanque_combustivel-2.jpg" alt="Tanque Cromado 1:14 - Vista Superior" onclick="abrirZoom(this)">
-           
-        </div>
-        
-        <h2>Tanque de Combustível Cromado - Escala 1:14</h2>
-        <p class="descricao">Fabricado em ABS de alta resistência com acabamento cromado espelhado de alto brilho. Acompanha suportes em cinta flexível (TPU) e parafusos reais.</p>
-    </div>
-    <div>
-        <div class="info-frete-card info-frete-texto">🚚 Frete...</div>
-        <div class="preco preco-texto">R$ 100,00</div>
-        <a href="#" target="_blank" class="btn-mercado-pago btn-cartao" style="background-color: #009ee3; margin-bottom: 12px;">💳 Comprar no Cartão</a>
-        <a href="#" target="_blank" class="btn-mercado-pago btn-pix" style="background-color: #00b159;">🟢 Pagar no Pix</a>
-    </div>
-</div>
+        <div class="produto-card class-produto" 
+             data-preco="100.00" 
+             data-link-cartao="https://mercadopago.com.br" 
+             data-link-pix="https://mercadopago.com.br">
+            <div>
+                <div class="container-foto-catalogo">
+                    <span class="seta-visual visual-esquerda">&lsaquo;</span>
+                    <img src="tanque_combustivel-1.jpg" alt="Tanque Cromado 1:14" onclick="abrirZoom(this)">
+                    <span class="seta-visual visual-direita">&rsaquo;</span>
+                    
+                    <img src="tanque_combustivel-2.jpg" alt="Tanque Cromado 1:14 - Foto 2" onclick="abrirZoom(this)">
+                    
+                </div>
+                <h2>Tanque de Combustível Cromado - Escala 1:14</h2>
+                <p class="descricao">Fabricado em ABS de alta resistência com acabamento cromado espelhado de alto brilho. Acompanha suportes em cinta flexível (TPU) e parafusos reais.</p>
+            </div>
+            <div>
+                <!-- Linhas de detalhes solicitadas -->
+                <div class="detalhe-preco-linha" id="linha-cartao-p1">Valor em 10x sem juros: R$ 10,00</div>
+                <div class="detalhe-preco-linha" id="linha-pix-p1">No Pix 10% de desconto: R$ 90,00</div>
+                <div class="info-frete-card info-frete-texto">🚚 Frete...</div>
+                
+                <!-- Opção para o cliente escolher antes de clicar no botão único -->
+                <div style="margin: 10px 0; font-size: 0.9em; text-align: left; background: #222; padding: 8px; border-radius: 6px; border: 1px solid #333;">
+                    <label style="display:block; margin-bottom: 5px; cursor:pointer;"><input type="radio" name="forma-pago-p1" value="cartao" checked onchange="atualizarBotaoUnico(this)"> 💳 Pagar com Cartão (10x)</label>
+                    <label style="display:block; cursor:pointer;"><input type="radio" name="forma-pago-p1" value="pix" onchange="atualizarBotaoUnico(this)"> 🟢 Pagar com Pix (10% OFF)</label>
+                </div>
 
+                <a href="#" target="_blank" class="btn-mercado-pago btn-comprar-unico" style="background-color: #009ee3;">🛒 Comprar</a>
+            </div>
+        </div>
 
         <!-- PRODUTO 2: PAR DE PARA-LAMAS -->
         <div class="produto-card class-produto" 
@@ -94,54 +98,31 @@
              data-link-cartao="https://mercadopago.com.br" 
              data-link-pix="https://mercadopago.com.br">
             <div>
-                <div class="img-reserva">⚙️</div>
+                <div class="container-foto-catalogo">
+                    <span class="seta-visual visual-esquerda">&lsaquo;</span>
+                    <img src="paralamas-114.jpg" alt="Par de Para-lamas Traseiros 1:14" onclick="abrirZoom(this)">
+                    <span class="seta-visual visual-direita">&rsaquo;</span>
+                </div>
                 <h2>Par de Para-lamas Traseiros - Escala 1:14</h2>
                 <p class="descricao">Modelagem exclusiva com acabamento fosco realista. Compatível com chassi padrão Tamiya. Alta flexibilidade para aguentar impactos.</p>
             </div>
             <div>
+                <!-- Linhas de detalhes solicitadas -->
+                <div class="detalhe-preco-linha" id="linha-cartao-p2">Valor em 10x sem juros: R$ 8,50</div>
+                <div class="detalhe-preco-linha" id="linha-pix-p2">No Pix 10% de desconto: R$ 76,50</div>
                 <div class="info-frete-card info-frete-texto">🚚 Frete...</div>
-                <div class="preco preco-texto">R$ 85,00</div>
-                <a href="#" target="_blank" class="btn-mercado-pago btn-cartao" style="background-color: #009ee3; margin-bottom: 12px;">💳 Comprar no Cartão</a>
-                <a href="#" target="_blank" class="btn-mercado-pago btn-pix" style="background-color: #00b159;">🟢 Pagar no Pix</a>
-            </div>
-        </div>
-        
-        <!-- PRODUTO 3: TANQUE DE COMBUSTÍVEL -->
-        <div class="produto-card class-produto" 
-             data-preco="100.00" 
-             data-link-cartao="https://mercadopago.com.br" 
-             data-link-pix="https://mercadopago.com.br">
-            <div>
-                <div class="img-reserva">🚛</div>
-                <h2>Tanque de Combustível Cromado - Escala 1:14</h2>
-                <p class="descricao">Fabricado em ABS de alta resistência com acabamento cromado espelhado de alto brilho. Acompanha suportes em cinta flexível (TPU) e parafusos reais.</p>
-            </div>
-            <div>
-                <div class="info-frete-card info-frete-texto">🚚 Frete...</div>
-                <div class="preco preco-texto">R$ 100,00</div>
-                <a href="#" target="_blank" class="btn-mercado-pago btn-cartao" style="background-color: #009ee3; margin-bottom: 12px;">💳 Comprar no Cartão</a>
-                <a href="#" target="_blank" class="btn-mercado-pago btn-pix" style="background-color: #00b159;">🟢 Pagar no Pix</a>
+                
+                <div style="margin: 10px 0; font-size: 0.9em; text-align: left; background: #222; padding: 8px; border-radius: 6px; border: 1px solid #333;">
+                    <label style="display:block; margin-bottom: 5px; cursor:pointer;"><input type="radio" name="forma-pago-p2" value="cartao" checked onchange="atualizarBotaoUnico(this)"> 💳 Pagar com Cartão (10x)</label>
+                    <label style="display:block; cursor:pointer;"><input type="radio" name="forma-pago-p2" value="pix" onchange="atualizarBotaoUnico(this)"> 🟢 Pagar com Pix (10% OFF)</label>
+                </div>
+
+                <a href="#" target="_blank" class="btn-mercado-pago btn-comprar-unico" style="background-color: #009ee3;">🛒 Comprar</a>
             </div>
         </div>
 
-        <!-- PRODUTO 4: TANQUE DE COMBUSTÍVEL -->
-        <div class="produto-card class-produto" 
-             data-preco="100.00" 
-             data-link-cartao="https://mercadopago.com.br" 
-             data-link-pix="https://mercadopago.com.br">
-            <div>
-                <div class="img-reserva">🚛</div>
-                <h2>Tanque de Combustível Cromado - Escala 1:14</h2>
-                <p class="descricao">Fabricado em ABS de alta resistência com acabamento cromado espelhado de alto brilho. Acompanha suportes em cinta flexível (TPU) e parafusos reais.</p>
-            </div>
-            <div>
-                <div class="info-frete-card info-frete-texto">🚚 Frete...</div>
-                <div class="preco preco-texto">R$ 100,00</div>
-                <a href="#" target="_blank" class="btn-mercado-pago btn-cartao" style="background-color: #009ee3; margin-bottom: 12px;">💳 Comprar no Cartão</a>
-                <a href="#" target="_blank" class="btn-mercado-pago btn-pix" style="background-color: #00b159;">🟢 Pagar no Pix</a>
-            </div>
-        </div>
     </main>
+
 
     <footer>
         <p>&copy; 2026 Rota Réplicas. Todos os direitos reservados.</p>
