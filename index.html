@@ -57,7 +57,7 @@
 
 
 
-       <main class="catalogo">
+           <main class="catalogo" translate="no">
 
         <!-- PRODUTO 1: TANQUE DE COMBUSTÍVEL -->
         <div class="produto-card class-produto" 
@@ -77,14 +77,17 @@
                 <p class="descricao">Fabricado em ABS de alta resistência com acabamento cromado espelhado de alto brilho. Acompanha suportes em cinta flexível (TPU) e parafusos reais.</p>
             </div>
             <div>
-                <!-- Linhas de detalhes solicitadas -->
+                <!-- Preço Base com Borda Atrativa -->
+                <div class="preco-base-badge" id="preco-base-p1">R$ 100,00</div>
+
+                <!-- Linhas de detalhes na ordem solicitada -->
+                <div class="info-frete-card info-frete-texto">🚚 Frete...</div>
                 <div class="detalhe-preco-linha" id="linha-cartao-p1">Valor em 10x sem juros: R$ 10,00</div>
                 <div class="detalhe-preco-linha" id="linha-pix-p1">No Pix 10% de desconto: R$ 90,00</div>
-                <div class="info-frete-card info-frete-texto">🚚 Frete...</div>
                 
-                <!-- Opção para o cliente escolher antes de clicar no botão único -->
-                <div style="margin: 10px 0; font-size: 0.9em; text-align: left; background: #222; padding: 8px; border-radius: 6px; border: 1px solid #333;">
-                    <label style="display:block; margin-bottom: 5px; cursor:pointer;"><input type="radio" name="forma-pago-p1" value="cartao" checked onchange="atualizarBotaoUnico(this)"> 💳 Pagar com Cartão (10x)</label>
+                <!-- Seleção de pagamento antes do botão único -->
+                <div style="margin: 15px 0 10px 0; font-size: 0.9em; text-align: left; background: #222; padding: 10px; border-radius: 6px; border: 1px solid #333;">
+                    <label style="display:block; margin-bottom: 8px; cursor:pointer;"><input type="radio" name="forma-pago-p1" value="cartao" checked onchange="atualizarBotaoUnico(this)"> 💳 Pagar com Cartão (10x)</label>
                     <label style="display:block; cursor:pointer;"><input type="radio" name="forma-pago-p1" value="pix" onchange="atualizarBotaoUnico(this)"> 🟢 Pagar com Pix (10% OFF)</label>
                 </div>
 
@@ -107,13 +110,16 @@
                 <p class="descricao">Modelagem exclusiva com acabamento fosco realista. Compatível com chassi padrão Tamiya. Alta flexibilidade para aguentar impactos.</p>
             </div>
             <div>
-                <!-- Linhas de detalhes solicitadas -->
+                <!-- Preço Base com Borda Atrativa -->
+                <div class="preco-base-badge" id="preco-base-p2">R$ 85,00</div>
+
+                <!-- Linhas de detalhes na ordem solicitada -->
+                <div class="info-frete-card info-frete-texto">🚚 Frete...</div>
                 <div class="detalhe-preco-linha" id="linha-cartao-p2">Valor em 10x sem juros: R$ 8,50</div>
                 <div class="detalhe-preco-linha" id="linha-pix-p2">No Pix 10% de desconto: R$ 76,50</div>
-                <div class="info-frete-card info-frete-texto">🚚 Frete...</div>
                 
-                <div style="margin: 10px 0; font-size: 0.9em; text-align: left; background: #222; padding: 8px; border-radius: 6px; border: 1px solid #333;">
-                    <label style="display:block; margin-bottom: 5px; cursor:pointer;"><input type="radio" name="forma-pago-p2" value="cartao" checked onchange="atualizarBotaoUnico(this)"> 💳 Pagar com Cartão (10x)</label>
+                <div style="margin: 15px 0 10px 0; font-size: 0.9em; text-align: left; background: #222; padding: 10px; border-radius: 6px; border: 1px solid #333;">
+                    <label style="display:block; margin-bottom: 8px; cursor:pointer;"><input type="radio" name="forma-pago-p2" value="cartao" checked onchange="atualizarBotaoUnico(this)"> 💳 Pagar com Cartão (10x)</label>
                     <label style="display:block; cursor:pointer;"><input type="radio" name="forma-pago-p2" value="pix" onchange="atualizarBotaoUnico(this)"> 🟢 Pagar com Pix (10% OFF)</label>
                 </div>
 
@@ -122,6 +128,7 @@
         </div>
 
     </main>
+
 
 
     <footer>
