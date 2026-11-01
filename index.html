@@ -17,7 +17,6 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.4s ease, visibility 0.4s ease;
         }
         .modal-cep-content {
             background-color: #1a1a1a;
@@ -39,39 +38,22 @@
             font-size: 0.95em;
             margin-bottom: 20px;
         }
-        .modal-input-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
         .modal-cep-content input {
-            flex: 1;
+            width: 80%;
             padding: 12px;
             border-radius: 8px;
             background-color: #2b2b2b;
             color: #fff;
             border: 1px solid #444;
-            font-size: 1.1em;
+            font-size: 1.3em;
             text-align: center;
-        }
-        .modal-cep-content button {
-            padding: 12px 20px;
-            background-color: #009ee3;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1em;
-            transition: background 0.2s;
-        }
-        .modal-cep-content button:hover {
-            background-color: #0081ba;
+            letter-spacing: 2px;
         }
         .modal-status {
             font-size: 0.9em;
             color: #ff6b6b;
             display: block;
+            margin-top: 15px;
             min-height: 20px;
         }
 
@@ -147,7 +129,6 @@
             margin-bottom: 15px;
         }
         
-        /* Informações do Frete Gravado no Card */
         .info-frete-card {
             background-color: #222;
             padding: 10px;
@@ -195,12 +176,10 @@
     <div class="modal-cep-overlay" id="modal-cep">
         <div class="modal-cep-content">
             <h2>Bem-vindo à Rota Réplicas</h2>
-            <p>Por favor, informe seu CEP para calcular o frete e visualizar os valores totais dos produtos.</p>
-            <div class="modal-input-container">
-                <input type="text" id="cep-inicial" placeholder="00000-000" maxlength="9" oninput="mascaraCEP(this)">
-                <button type="button" onclick="processarCEPEntrada()">Entrar</button>
-            </div>
-            <span class="modal-status" id="modal-erro"></span>
+            <p>Digite os 8 números do seu CEP para liberar o catálogo com os valores de frete somados.</p>
+            <!-- O script monitora o que é digitado aqui em tempo real -->
+            <input type="text" id="cep-inicial" placeholder="00000-000" maxlength="9" oninput="monitorarDigitacaoCEP(this)">
+            <span class="modal-status" id="modal-erro">Aguardando CEP...</span>
         </div>
     </div>
 
@@ -224,7 +203,7 @@
                 <p class="descricao">Fabricado em ABS de alta resistência com acabamento cromado espelhado de alto brilho. Acompanha suportes em cinta flexível (TPU) e parafusos reais.</p>
             </div>
             <div>
-                <div class="info-frete-card info-frete-texto">🚚 Calculando frete...</div>
+                <div class="info-frete-card info-frete-texto">🚚 Frete...</div>
                 <div class="preco preco-texto">R$ 100,00</div>
                 <a href="#" target="_blank" class="btn-mercado-pago btn-cartao" style="background-color: #009ee3; margin-bottom: 12px;">💳 Comprar no Cartão</a>
                 <a href="#" target="_blank" class="btn-mercado-pago btn-pix" style="background-color: #00b159;">🟢 Pagar no Pix</a>
@@ -242,7 +221,7 @@
                 <p class="descricao">Modelagem exclusiva com acabamento fosco realista. Compatível com chassi padrão Tamiya. Alta flexibilidade para aguentar impactos.</p>
             </div>
             <div>
-                <div class="info-frete-card info-frete-texto">🚚 Calculando frete...</div>
+                <div class="info-frete-card info-frete-texto">🚚 Frete...</div>
                 <div class="preco preco-texto">R$ 85,00</div>
                 <a href="#" target="_blank" class="btn-mercado-pago btn-cartao" style="background-color: #009ee3; margin-bottom: 12px;">💳 Comprar no Cartão</a>
                 <a href="#" target="_blank" class="btn-mercado-pago btn-pix" style="background-color: #00b159;">🟢 Pagar no Pix</a>
@@ -257,9 +236,8 @@
     </footer>
 
     <script>
-        const descontoPix = 0.10; // 10% de desconto no valor do produto
+        const descontoPix = 0.10;
 
-        // Tabela de frete fixo por estado
         const tabelaFretePorEstado = {
             'SP': 15.00, 'RJ': 25.00, 'MG': 25.00, 'ES': 25.00,
             'PR': 32.00, 'SC': 32.00, 'RS': 32.00,
@@ -268,33 +246,23 @@
             'AM': 55.00, 'PA': 55.00, 'AC': 55.00, 'RO': 55.00, 'RR': 55.00, 'AP': 55.00, 'TO': 48.00
         };
 
-        function mascaraCEP(input) {
-            let v = input.value.replace(/\D/g, "");
-            if (v.length > 5) {
-                v = v.substring(0, 5) + "-" + v.substring(5, 8);
-            }
-            input.value = v;
-        }
-
-        // Função local inteligente para identificar o estado pelo prefixo do CEP
         function descobrirEstadoPorCEP(cep) {
             const prefixo = parseInt(cep.substring(0, 3));
-            
             if (prefixo >= 10 && prefixo <= 199) return { uf: 'SP', regiao: 'São Paulo' };
             if (prefixo >= 200 && prefixo <= 289) return { uf: 'RJ', regiao: 'Rio de Janeiro' };
             if (prefixo >= 290 && prefixo <= 299) return { uf: 'ES', regiao: 'Espírito Santo' };
-if (prefixo >= 300 && prefixo <= 399) return { uf: 'MG', regiao: 'Minas Gerais' };
-if (prefixo >= 400 && prefixo <= 489) return { uf: 'BA', regiao: 'Bahia' };
-if (prefixo >= 490 && prefixo <= 499) return { uf: 'SE', regiao: 'Sergipe' };
-if (prefixo >= 500 && prefixo <= 569) return { uf: 'PE', regiao: 'Pernambuco' };
-if (prefixo >= 570 && prefixo <= 579) return { uf: 'AL', regiao: 'Alagoas' };
-if (prefixo >= 580 && prefixo <= 589) return { uf: 'PB', regiao: 'Paraíba' };
-if (prefixo >= 590 && prefixo <= 599) return { uf: 'RN', regiao: 'Rio Grande do Norte' };
-if (prefixo >= 600 && prefixo <= 639) return { uf: 'CE', regiao: 'Ceará' };
-if (prefixo >= 640 && prefixo <= 649) return { uf: 'PI', regiao: 'Piauí' };
-if (prefixo >= 650 && prefixo <= 659) return { uf: 'MA', regiao: 'Maranhão' };
-if (prefixo >= 660 && prefixo <= 688) return { uf: 'PA', regiao: 'Pará' };
-if (prefixo >= 689 && prefixo <= 689) return { uf: 'AP', regiao: 'Amapá' };
+            if (prefixo >= 300 && prefixo <= 399) return { uf: 'MG', regiao: 'Minas Gerais' };
+            if (prefixo >= 400 && prefixo <= 489) return { uf: 'BA', regiao: 'Bahia' };
+            if (prefixo >= 490 && prefixo <= 499) return { uf: 'SE', regiao: 'Sergipe' };
+            if (prefixo >= 500 && prefixo <= 569) return { uf: 'PE', regiao: 'Pernambuco' };
+            if (prefixo >= 570 && prefixo <= 579) return { uf: 'AL', regiao: 'Alagoas' };
+            if (prefixo >= 580 && prefixo <= 589) return { uf: 'PB', regiao: 'Paraíba' };
+            if (prefixo >= 590 && prefixo <= 599) return { uf: 'RN', regiao: 'Rio Grande do Norte' };
+            if (prefixo >= 600 && prefixo <= 639) return { uf: 'CE', regiao: 'Ceará' };
+            if (prefixo >= 640 && prefixo <= 649) return { uf: 'PI', regiao: 'Piauí' };
+            if (prefixo >= 650 && prefixo <= 659) return { uf: 'MA', regiao: 'Maranhão' };
+            if (prefixo >= 660 && prefixo <= 688) return { uf: 'PA', regiao: 'Pará' };
+            if (prefixo >= 689 && prefixo <= 689) return { uf: 'AP', regiao: 'Amapá' };
 if (prefixo >= 690 && prefixo <= 692) return { uf: 'AM', regiao: 'Amazonas' };
 if (prefixo >= 693 && prefixo <= 693) return { uf: 'RR', regiao: 'Roraima' };
 if (prefixo >= 694 && prefixo <= 698) return { uf: 'AM', regiao: 'Amazonas' };
@@ -312,30 +280,35 @@ if (prefixo >= 880 && prefixo <= 899) return { uf: 'SC', regiao: 'Santa Catarina
 if (prefixo >= 900 && prefixo <= 999) return { uf: 'RS', regiao: 'Rio Grande do Sul' };
 return null;
 }
-function processarCEPEntrada() {
-const cepInput = document.getElementById('cep-inicial').value.replace(/\D/g, "");
+// Esta função roda a cada número digitado e faz a liberação automática
+function monitorarDigitacaoCEP(input) {
+let v = input.value.replace(/\D/g, "");
+// Aplica a máscara visual hifenizada
+if (v.length > 5) {
+input.value = v.substring(0, 5) + "-" + v.substring(5, 8);
+} else {
+input.value = v;
+}
 const erroTxt = document.getElementById('modal-erro');
-if (cepInput.length !== 8) {
-erroTxt.style.color = "#ff6b6b";
-erroTxt.innerText = "⚠️ Digite um CEP válido com 8 dígitos.";
-return;
-}
-// Descobre a região localmente sem fazer requisição de rede (Evita travamentos de CORS)
-const localizacao = descobrirEstadoPorCEP(cepInput);
-if (!localizacao) {
-erroTxt.style.color = "#ff6b6b";
-erroTxt.innerText = "❌ Faixa de CEP não reconhecida.";
-return;
-}
+// Assim que o cliente completa os 8 dígitos, o site destrava sozinho
+if (v.length === 8) {
+const localizacao = descobrirEstadoPorCEP(v);
+if (localizacao) {
 const uf = localizacao.uf;
 const regiaoNome = localizacao.regiao;
 const valorFreteFinal = tabelaFretePorEstado[uf] || 35.00;
-// Atualiza de imediato as informações visuais
+// Faz as contas e atualiza o catálogo
 atualizarTodosOsProdutos(valorFreteFinal, regiaoNome, uf);
-// Desbloqueia e oculta o modal instantaneamente
-const modal = document.getElementById('modal-cep');
-modal.style.opacity = '0';
-modal.style.visibility = 'hidden';
+// Remove completamente a tela de bloqueio da visualização
+document.getElementById('modal-cep').style.display = 'none';
+} else {
+erroTxt.style.color = "#ff6b6b";
+erroTxt.innerText = "❌ CEP não reconhecido.";
+}
+} else {
+erroTxt.style.color = "#aaa";
+erroTxt.innerText = "Digitando... (insira os 8 dígitos)";
+}
 }
 function atualizarTodosOsProdutos(valorFrete, regiao, uf) {
 const produtos = document.querySelectorAll('.class-produto');
