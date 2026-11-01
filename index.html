@@ -49,12 +49,22 @@
             font-size: 1.3em;
             text-align: center;
             letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+        .btn-pular {
+            display: block;
+            margin: 10px auto 0 auto;
+            background: none;
+            border: none;
+            color: #009ee3;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 0.9em;
         }
         .modal-status {
             font-size: 0.9em;
             color: #ff6b6b;
             display: block;
-            margin-top: 15px;
             min-height: 20px;
         }
 
@@ -177,9 +187,10 @@
     <div class="modal-cep-overlay" id="modal-cep">
         <div class="modal-cep-content">
             <h2>Bem-vindo à Rota Réplicas</h2>
-            <p>Digite os 8 números do seu CEP para liberar o catálogo com os valores de frete somados.</p>
+            <p>Digite seu CEP para calcular o frete e somar aos produtos automaticamente.</p>
             <input type="text" id="cep-inicial" placeholder="00000-000" maxlength="9" oninput="monitorarDigitacaoCEP(this)">
             <span class="modal-status" id="modal-erro">Aguardando CEP...</span>
+            <button type="button" class="btn-pular" onclick="pularCep()">Visualizar catálogo sem frete</button>
         </div>
     </div>
 
@@ -246,7 +257,6 @@
             'AM': 55.00, 'PA': 55.00, 'AC': 55.00, 'RO': 55.00, 'RR': 55.00, 'AP': 55.00, 'TO': 48.00
         };
 
-        // Identificador de estado aprimorado usando leitura de texto pura (Sem erros com zeros à esquerda)
         function descobrirEstadoPorCEP(cep) {
             const r2 = cep.substring(0, 2);
             const r3 = cep.substring(0, 3);
@@ -263,10 +273,10 @@
             if (r2 === "59") return { uf: 'RN', regiao: 'Rio Grande do Norte' };
             if (r2 >= "60" && r2 <= "63") return { uf: 'CE', regiao: 'Ceará' };
             if (r2 === "64") return { uf: 'PI', regiao: 'Piauí' };
-            if (r2 === "65") return { uf: 'MA', regiao: 'Maranhão' };
-            if (r2 >= "66" && r2 <= "67") return { uf: 'PA', regiao: 'Pará' };
-            if (r2 === "68") {
-                if (r3 >= "680" && r3 <= "688") return { uf: 'PA', regiao: 'Pará' };
+if (r2 === "65") return { uf: 'MA', regiao: 'Maranhão' };
+if (r2 >= "66" && r2 <= "67") return { uf: 'PA', regiao: 'Pará' };
+if (r2 === "68") {
+if (r3 >= "680" && r3 <= "688") return { uf: 'PA', regiao: 'Pará' };
 if (r3 === "689") return { uf: 'AP', regiao: 'Amapá' };
 }
 if (r3 >= "690" && r3 <= "692") return { uf: 'AM', regiao: 'Amazonas' };
@@ -290,20 +300,22 @@ input.value = v.substring(0, 5) + "-" + v.substring(5, 8);
 } else {
 input.value = v;
 }
-// Quando completa 8 números, executa a ação imediatamente
 if (v.length === 8) {
 const localizacao = descobrirEstadoPorCEP(v);
-// Trava de segurança: Se o estado não for mapeado, usa SP como padrão e destrava mesmo assim
 const uf = localizacao ? localizacao.uf : 'SP';
 const regiaoNome = localizacao ? localizacao.regiao : 'Brasil';
 const valorFreteFinal = tabelaFretePorEstado[uf] || 35.00;
 atualizarTodosOsProdutos(valorFreteFinal, regiaoNome, uf);
-// Esconde a tela preta de bloqueio
 document.getElementById('modal-cep').style.display = 'none';
 } else {
 document.getElementById('modal-erro').style.color = "#aaa";
 document.getElementById('modal-erro').innerText = "Digitando... (insira os 8 dígitos)";
 }
+}
+function pularCep() {
+// Destrava usando Frete Grátis/A combinar
+atualizarTodosOsProdutos(0, "Combinar Retirada", "GRÁTIS");
+document.getElementById('modal-cep').style.display = 'none';
 }
 function atualizarTodosOsProdutos(valorFrete, regiao, uf) {
 const produtos = document.querySelectorAll('.class-produto');
@@ -314,7 +326,8 @@ const linkBasePix = produto.getAttribute('data-link-pix');
 const totalCartao = precoProduto + valorFrete;
 const totalPix = (precoProduto * (1 - descontoPix)) + valorFrete;
 const valorParcela = totalCartao / 10;
-produto.querySelector('.info-frete-texto').innerText = 🚚 Frete para ${regiao} (${uf}): R$ ${valorFrete.toFixed(2).replace('.', ',')};
+const txtFrete = valorFrete === 0 ? "🚚 Retirada ou Frete a combinar" : 🚚 Frete para ${regiao} (${uf}): R$ ${valorFrete.toFixed(2).replace('.', ',')};
+produto.querySelector('.info-frete-texto').innerText = txtFrete;
 produto.querySelector('.preco-texto').innerText = R$ ${totalCartao.toFixed(2).replace('.', ',')};
 produto.querySelector('.btn-cartao').innerHTML = 💳 Comprar em até 10x de R$ ${valorParcela.toFixed(2).replace('.', ',')} sem juros;
 produto.querySelector('.btn-cartao').href = ${linkBaseCartao}?price=${totalCartao};
@@ -322,5 +335,7 @@ produto.querySelector('.btn-pix').innerHTML = 🟢 Pagar no Pix por R$ ${totalPi
 produto.querySelector('.btn-pix').href = ${linkBasePix}?price=${totalPix};
 });
 }
+// Executa uma vez com valor zero antes de digitar o CEP
+atualizarTodosOsProdutos(0, "", "");
 
     </script>
