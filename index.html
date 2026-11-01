@@ -2,90 +2,285 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Cálculo de Frete Automatizado</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rota Réplicas - Peças e Customizações 1:14</title>
     <style>
-        body { font-family: sans-serif; margin: 20px; }
-        .checkout-container { max-width: 400px; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input[type="text"] { width: 100%; padding: 8px; box-sizing: border-box; }
-        button { padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background-color: #0056b3; }
-        .result { margin-top: 15px; font-size: 1.1em; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #111;
+            margin: 0;
+            padding: 20px;
+            color: #eee;
+        }
+        header {
+            text-align: center;
+            background-color: #000;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 2px solid #333;
+        }
+        header img {
+            max-width: 220px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2em;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+        header p {
+            margin: 10px 0 0 0;
+            color: #aaa;
+            font-size: 1.1em;
+        }
+        .catalogo {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            justify-content: center;
+        }
+        .produto-card {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 340px;
+            text-align: center;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+        }
+        .produto-card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #222;
+        }
+        .produto-card h2 {
+            font-size: 1.3em;
+            margin: 10px 0;
+            color: #fff;
+        }
+        .descricao {
+            font-size: 0.95em;
+            color: #bbb;
+            min-height: 60px;
+            line-height: 1.4;
+            text-align: left;
+        }
+        
+        /* Nova seção de cálculo por CEP */
+        .secao-cep {
+            background-color: #222;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: left;
+            border: 1px solid #444;
+        }
+        .secao-cep label {
+            display: block;
+            font-size: 0.9em;
+            color: #ccc;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .input-container {
+            display: flex;
+            gap: 8px;
+        }
+        .secao-cep input {
+            flex: 1;
+            padding: 8px;
+            border-radius: 6px;
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #555;
+            font-size: 1em;
+            text-align: center;
+        }
+        .secao-cep button {
+            padding: 8px 15px;
+            background-color: #444;
+            color: #fff;
+            border: 1px solid #666;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .secao-cep button:hover {
+            background-color: #555;
+        }
+        .status-frete {
+            font-size: 0.85em;
+            margin-top: 8px;
+            color: #aaa;
+            display: block;
+            min-height: 18px;
+        }
+
+        .preco {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #fff;
+            margin: 15px 0 15px 0;
+        }
+        .btn-mercado-pago {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 8px;
+            display: block;
+            text-align: center;
+            font-size: 1em;
+            transition: opacity 0.2s;
+        }
+        .btn-mercado-pago:hover {
+            opacity: 0.9;
+        }
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+            border-top: 1px solid #222;
+        }
     </style>
 </head>
 <body>
 
-<div class="checkout-container">
-    <h3>Resumo do Pedido</h3>
-    <p>Subtotal: <span id="subtotal">R$ 100,00</span></p>
-    
-    <div class="form-group">
-        <label for="cepInput">Digite seu CEP:</label>
-        <!-- Máscara simples e limite de caracteres para o CEP brasileiro -->
-        <input type="text" id="cepInput" placeholder="00000-000" maxlength="9">
-    </div>
-    
-    <button onclick="processarFrete()">Calcular Frete</button>
+    <header>
+        <img src="logo.png" alt="Rota Réplicas Logo">
+        <h1>Rota Réplicas</h1>
+        <p>Peças exclusivas e alta customização na escala 1:14</p>
+    </header>
 
-    <div class="result">
-        <p>Frete: <span id="valorFrete">R$ 0,00</span></p>
-        <p><strong>Total: <span id="valorTotal">R$ 100,00</span></strong></p>
-    </div>
-</div>
+    <main class="catalogo">
 
-<script>
-// Valor base do produto fictício
-const subtotal = 100.00;
+        <!-- ANÚNCIO: TANQUE DE COMBUSTÍVEL 1:14 -->
+        <div class="produto-card">
+            <img src="tanque-114.jpg" alt="Tanque de Combustível Cromado 1:14">
+            <h2>Tanque de Combustível Cromado - Escala 1:14</h2>
+            <p class="descricao">Fabricado em ABS de alta resistência com acabamento cromado espelhado de alto brilho. Acompanha suportes em cinta flexível (TPU) e parafusos reais para fixação no chassi.</p>
+            
+            <!-- SEÇÃO DE DIGITAÇÃO DO CEP -->
+            <div class="secao-cep">
+                <label for="cep">Calcular Frete (Digite seu CEP):</label>
+                <div class="input-container">
+                    <input type="text" id="cep" placeholder="00000-000" maxlength="9" oninput="mascaraCEP(this)">
+                    <button type="button" onclick="consultarFrete()">Calcular</button>
+                </div>
+                <span class="status-frete" id="status-frete">Insira o CEP para calcular o valor final.</span>
+            </div>
+            
+            <!-- VALOR FINAL EXIBIDO DINAMICAMENTE -->
+            <div class="preco" id="preco-exibido">R$ 100,00</div>
+            
+            <!-- BOTÃO 1: CARTÃO PARCELADO -->
+            <a id="btn-cartao" href="SEU_LINK_BASE_DO_CARTAO" target="_blank" class="btn-mercado-pago" style="background-color: #009ee3; margin-bottom: 12px;">
+                💳 Comprar no Cartão em até 10x
+            </a>
 
-// Exemplo 1: Lógica local baseada nos primeiros dígitos do CEP
-function calcularFretePorRegiao(cep) {
-    // Remove hífen ou espaços para validação limpa
-    const cepLimpo = cep.replace(/\D/g, ''); 
-    
-    if (cepLimpo.length !== 8) {
-        alert("Por favor, insira um CEP válido com 8 dígitos.");
-        return null;
-    }
+            <!-- BOTÃO 2: PIX COM DESCONTO -->
+            <a id="btn-pix" href="SEU_LINK_BASE_DO_PIX" target="_blank" class="btn-mercado-pago" style="background-color: #00b159;">
+                🟢 Pagar no Pix com 10% de Desconto
+            </a>
+        </div>
 
-    // Pega os dois primeiros dígitos para determinar a região (Exemplo para o Brasil)
-    const prefixo = parseInt(cepLimpo.substring(0, 2));
+    </main>
 
-    if (prefixo >= 1 && prefixo <= 19) {
-        return 15.00; // São Paulo (Capital e Interior)
-    } else if (prefixo >= 20 && prefixo <= 28) {
-        return 22.00; // Rio de Janeiro e Espírito Santo
-    } else if (prefixo >= 30 && prefixo <= 39) {
-        return 25.00; // Minas Gerais
-    } else {
-        return 35.00; // Demais regiões
-    }
+    <footer>
+        <p>&copy; 2026 Rota Réplicas. Todos os direitos reservados.</p>
+        <p>Catálogo Oficial e Seguro.</p>
+    </footer>
+
+    <!-- SCRIPT DE CÁLCULO E CONSULTA DE CEP -->
+    <script>
+        // Configurações Base do Produto
+        const precoProduto = 100.00;
+        const descontoPix = 0.10; // 10% de desconto
+
+        // Links base da sua conta Mercado Pago
+        const linkBaseCartao = "https://mercadopago.com.br";
+        const linkBasePix = "https://mercadopago.com.br";
+
+        // Tabela de Preços Fixos de Frete por Estado (Ajuste os valores aqui conforme desejar)
+        const tabelaFretePorEstado = {
+            'SP': 22.00,
+            'RJ': 25.00, 'MG': 25.00, 'ES': 25.00, // Região Sudeste
+            'PR': 32.00, 'SC': 32.00, 'RS': 32.00, // Região Sul
+            'DF': 35.00, 'GO': 35.00, 'MT': 35.00, 'MS': 35.00, // Centro-Oeste
+            'BA': 40.00, 'CE': 42.00, 'PE': 42.00, 'MA': 45.00, 'PB': 45.00, 'PI': 45.00, 'RN': 45.00, 'SE': 45.00, 'AL': 45.00, // Nordeste
+            'AM': 55.00, 'PA': 55.00, 'AC': 55.00, 'RO': 55.00, 'RR': 55.00, 'AP': 55.00, 'TO': 48.00 // Norte
+        };
+
+        // Aplica formato automático 00000-000 enquanto o usuário digita
+        function mascaraCEP(input) {
+            let v = input.value.replace(/\D/g, "");
+            if (v.length > 5) {
+                v = v.substring(0, 5) + "-" + v.substring(5, 8);
+            }
+            input.value = v;
+        }
+
+        async function consultarFrete() {
+            const cepInput = document.getElementById('cep').value.replace(/\D/g, "");
+            const statusTxt = document.getElementById('status-frete');
+
+            if (cepInput.length !== 8) {
+                statusTxt.style.color = "#ff6b6b";
+                statusTxt.innerText = "⚠️ Digite um CEP válido com 8 dígitos.";
+                return;
+            }
+
+            statusTxt.style.color = "#aaa";
+            statusTxt.innerText = "🔍 Buscando CEP...";
+
+            try {
+                // Consulta gratuita de CEP usando a API do BrasilAPI
+                const resposta = await fetch(`https://brasilapi.com.br{cepInput}`);
+                
+                if (!resposta.ok) throw new Error();
+
+                const dados = await responseData = await resposta.json();
+                const uf = dados.state; // Retorna a sigla do Estado (Ex: SP, RJ, etc.)
+                const cidade = dados.city;
+
+                // Procura o valor do frete na tabela acima. Se não achar, define um padrão de R$ 35,00
+                const valorFrete = tabelaFretePorEstado[uf] || 35.00;
+
+                statusTxt.style.color = "#00b159";
+                statusTxt.innerText = `🚚 Envio para ${cidade} - ${uf}: R$ ${valorFrete.toFixed(2).replace('.', ',')}`;
+
+                atualizarValores(valorFrete);
+
+            } catch (erro) {
+                statusTxt.style.color = "#ff6b6b";
+                statusTxt.innerText = "❌ CEP não encontrado. Verifique os números.";
+            }
+        }
+
+        function atualizarValores(valorFrete) {
+            // Cálculos dos valores finais
+            const totalCartao = precoProduto + valorFrete;
+            const totalPix = (precoProduto * (1 - descontoPix)) + valorFrete;
+            
+            // Atualiza o display principal
+            document.getElementById('preco-exibido').innerText = `R$ ${totalCartao.toFixed(2).replace('.', ',')}`;
+            
+            // Atualiza botões
+            const valorParcela = totalCartao / 10;
+            document.getElementById('btn-cartao').innerHTML = `💳 Comprar em até 10x de R$ ${valorParcela.toFixed(2).replace('.', ',')} sem juros`;
+            document.getElementById('btn-pix').innerHTML = `🟢 Pagar no Pix por R$ ${totalPix.toFixed(2).replace('.', ',')}`;
+
+            // Vincula o valor atualizado no link do Mercado Pago
+            document.getElementById('btn-cartao').href = `${linkBaseCartao}?price=${totalCartao}`;
+document.getElementById('btn-pix').href = ${linkBasePix}?price=${totalPix};
 }
-
-// Função principal que atualiza a tela
-function processarFrete() {
-    const cepValue = document.getElementById('cepInput').value;
-    const taxaFrete = calcularFretePorRegiao(cepValue);
-
-    if (taxaFrete !== null) {
-        const totalGeral = subtotal + taxaFrete;
-
-        // Atualiza os valores na interface formatados em Real (R$)
-        document.getElementById('valorFrete').innerText = taxaFrete.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        document.getElementById('valorTotal').innerText = totalGeral.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    }
-}
-
-// Bônus: Formata o CEP automaticamente com hífen enquanto o usuário digita (XXXXX-XXX)
-document.getElementById('cepInput').addEventListener('input', function (e) {
-    let value = e.target.value.replace(/\D/g, '');
-    if (value.length > 5) {
-        value = value.substring(0, 5) + '-' + value.substring(5, 8);
-    }
-    e.target.value = value;
-});
-</script>
-
-</body>
-</html>
-
+// Inicializa a interface com R$ 0 de frete até a consulta ocorrer
+atualizarValores(0);
