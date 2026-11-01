@@ -212,10 +212,11 @@
             border: 2px solid #333;
             cursor: default;
         }
-        /* Esconde as imagens adicionais do catálogo para não quebrar o layout */
-        .produto-card img:not(:first-of-type) {
-            display: none !important;
-        }
+       /* Esconde as imagens adicionais dentro dos cards de produto, mantendo visível apenas a primeira */
+.produto-card.class-produto img:not(:first-of-type) {
+    display: none !important;
+}
+
 
 
 
