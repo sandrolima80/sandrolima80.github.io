@@ -226,12 +226,12 @@
             <div>
                 <div class="info-frete-card info-frete-texto">🚚 Calculando frete...</div>
                 <div class="preco preco-texto">R$ 100,00</div>
-                <a href="#" target="_blank" class="btn-mercado-pago btn-cartao" style="background-color: #009ee3; margin-bottom: 12px;">¼ Comprar no Cartão</a>
+                <a href="#" target="_blank" class="btn-mercado-pago btn-cartao" style="background-color: #009ee3; margin-bottom: 12px;">💳 Comprar no Cartão</a>
                 <a href="#" target="_blank" class="btn-mercado-pago btn-pix" style="background-color: #00b159;">🟢 Pagar no Pix</a>
             </div>
         </div>
 
-        <!-- PRODUTO 2: EXEMPLO DE PRODUTO ADICIONAL (Para-lamas) -->
+        <!-- PRODUTO 2: PAR DE PARA-LAMAS -->
         <div class="produto-card class-produto" 
              data-preco="85.00" 
              data-link-cartao="https://mercadopago.com.br" 
@@ -276,39 +276,68 @@
             input.value = v;
         }
 
-        async function processarCEPEntrada() {
-            const cepInput = document.getElementById('cep-inicial').value.replace(/\D/g, "");
-            const erroTxt = document.getElementById('modal-erro');
-            const btnModal = document.querySelector('.modal-cep-content button');
-
-            if (cepInput.length !== 8) {
-                erroTxt.style.color = "#ff6b6b";
-                erroTxt.innerText = "⚠️ Digite um CEP válido com 8 dígitos.";
-                return;
+        // Função local inteligente para identificar o estado pelo prefixo do CEP
+        function descobrirEstadoPorCEP(cep) {
+            const prefixo = parseInt(cep.substring(0, 3));
+            
+            if (prefixo >= 10 && prefixo <= 199) return { uf: 'SP', regiao: 'São Paulo' };
+            if (prefixo >= 200 && prefixo <= 289) return { uf: 'RJ', regiao: 'Rio de Janeiro' };
+            if (prefixo >= 290 && prefixo <= 299) return { uf: 'ES', regiao: 'Espírito Santo' };
+if (prefixo >= 300 && prefixo <= 399) return { uf: 'MG', regiao: 'Minas Gerais' };
+if (prefixo >= 400 && prefixo <= 489) return { uf: 'BA', regiao: 'Bahia' };
+if (prefixo >= 490 && prefixo <= 499) return { uf: 'SE', regiao: 'Sergipe' };
+if (prefixo >= 500 && prefixo <= 569) return { uf: 'PE', regiao: 'Pernambuco' };
+if (prefixo >= 570 && prefixo <= 579) return { uf: 'AL', regiao: 'Alagoas' };
+if (prefixo >= 580 && prefixo <= 589) return { uf: 'PB', regiao: 'Paraíba' };
+if (prefixo >= 590 && prefixo <= 599) return { uf: 'RN', regiao: 'Rio Grande do Norte' };
+if (prefixo >= 600 && prefixo <= 639) return { uf: 'CE', regiao: 'Ceará' };
+if (prefixo >= 640 && prefixo <= 649) return { uf: 'PI', regiao: 'Piauí' };
+if (prefixo >= 650 && prefixo <= 659) return { uf: 'MA', regiao: 'Maranhão' };
+if (prefixo >= 660 && prefixo <= 688) return { uf: 'PA', regiao: 'Pará' };
+if (prefixo >= 689 && prefixo <= 689) return { uf: 'AP', regiao: 'Amapá' };
+if (prefixo >= 690 && prefixo <= 692) return { uf: 'AM', regiao: 'Amazonas' };
+if (prefixo >= 693 && prefixo <= 693) return { uf: 'RR', regiao: 'Roraima' };
+if (prefixo >= 694 && prefixo <= 698) return { uf: 'AM', regiao: 'Amazonas' };
+if (prefixo >= 699 && prefixo <= 699) return { uf: 'AC', regiao: 'Acre' };
+if (prefixo >= 700 && prefixo <= 727) return { uf: 'DF', regiao: 'Distrito Federal' };
+if (prefixo >= 728 && prefixo <= 729) return { uf: 'GO', regiao: 'Entorno DF' };
+if (prefixo >= 730 && prefixo <= 767) return { uf: 'GO', regiao: 'Goiás' };
+if (prefixo >= 768 && prefixo <= 769) return { uf: 'RO', regiao: 'Rondônia' };
+if (prefixo >= 770 && prefixo <= 779) return { uf: 'TO', regiao: 'Tocantins' };
+if (prefixo >= 780 && prefixo <= 788) return { uf: 'MT', regiao: 'Mato Grosso' };
+if (prefixo >= 789 && prefixo <= 789) return { uf: 'RO', regiao: 'Rondônia' };
+if (prefixo >= 790 && prefixo <= 799) return { uf: 'MS', regiao: 'Mato Grosso do Sul' };
+if (prefixo >= 800 && prefixo <= 879) return { uf: 'PR', regiao: 'Paraná' };
+if (prefixo >= 880 && prefixo <= 899) return { uf: 'SC', regiao: 'Santa Catarina' };
+if (prefixo >= 900 && prefixo <= 999) return { uf: 'RS', regiao: 'Rio Grande do Sul' };
+return null;
 }
-erroTxt.style.color = "#aaa";
-erroTxt.innerText = "🔍 Verificando frete...";
-btnModal.disabled = true;
-try {
-const resposta = await fetch(https://brasilapi.com.br{cepInput});
-if (!resposta.ok) throw new Error();
-const dados = await resposta.json();
-const uf = dados.state;
-const cidade = dados.city;
+function processarCEPEntrada() {
+const cepInput = document.getElementById('cep-inicial').value.replace(/\D/g, "");
+const erroTxt = document.getElementById('modal-erro');
+if (cepInput.length !== 8) {
+erroTxt.style.color = "#ff6b6b";
+erroTxt.innerText = "⚠️ Digite um CEP válido com 8 dígitos.";
+return;
+}
+// Descobre a região localmente sem fazer requisição de rede (Evita travamentos de CORS)
+const localizacao = descobrirEstadoPorCEP(cepInput);
+if (!localizacao) {
+erroTxt.style.color = "#ff6b6b";
+erroTxt.innerText = "❌ Faixa de CEP não reconhecida.";
+return;
+}
+const uf = localizacao.uf;
+const regiaoNome = localizacao.regiao;
 const valorFreteFinal = tabelaFretePorEstado[uf] || 35.00;
-// Atualiza todos os produtos
-atualizarTodosOsProdutos(valorFreteFinal, cidade, uf);
-// Fecha o modal limpando a tela travada
+// Atualiza de imediato as informações visuais
+atualizarTodosOsProdutos(valorFreteFinal, regiaoNome, uf);
+// Desbloqueia e oculta o modal instantaneamente
 const modal = document.getElementById('modal-cep');
 modal.style.opacity = '0';
 modal.style.visibility = 'hidden';
-} catch (erro) {
-erroTxt.style.color = "#ff6b6b";
-erroTxt.innerText = "❌ CEP inválido ou não encontrado.";
-btnModal.disabled = false;
 }
-}
-function atualizarTodosOsProdutos(valorFrete, cidade, uf) {
+function atualizarTodosOsProdutos(valorFrete, regiao, uf) {
 const produtos = document.querySelectorAll('.class-produto');
 produtos.forEach(produto => {
 const precoProduto = parseFloat(produto.getAttribute('data-preco'));
@@ -317,7 +346,7 @@ const linkBasePix = produto.getAttribute('data-link-pix');
 const totalCartao = precoProduto + valorFrete;
 const totalPix = (precoProduto * (1 - descontoPix)) + valorFrete;
 const valorParcela = totalCartao / 10;
-produto.querySelector('.info-frete-texto').innerText = 🚚 Frete para ${cidade} - ${uf}: R$ ${valorFrete.toFixed(2).replace('.', ',')};
+produto.querySelector('.info-frete-texto').innerText = 🚚 Frete para ${regiao} (${uf}): R$ ${valorFrete.toFixed(2).replace('.', ',')};
 produto.querySelector('.preco-texto').innerText = R$ ${totalCartao.toFixed(2).replace('.', ',')};
 produto.querySelector('.btn-cartao').innerHTML = 💳 Comprar em até 10x de R$ ${valorParcela.toFixed(2).replace('.', ',')} sem juros;
 produto.querySelector('.btn-cartao').href = ${linkBaseCartao}?price=${totalCartao};
