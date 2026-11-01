@@ -216,11 +216,19 @@
         .produto-card.class-produto img:not(:first-of-type) {
             display: none !important;
         }
-        /* Container para posicionar as setas por cima da imagem */
+       /* Container para posicionar as setas por cima da imagem */
 .container-foto-catalogo {
     position: relative;
     width: 100%;
-    display: inline-block;
+    display: block; /* Alterado para block para travar a estrutura no mobile */
+    overflow: hidden; /* Garante que nada saia do alinhamento do card */
+}
+
+/* Garante que a primeira imagem ocupe a largura correta sem empurrar as setas */
+.container-foto-catalogo img:first-of-type {
+    width: 100%;
+    height: auto;
+    display: block;
 }
 
 /* Estilo geral das setas visuais do catálogo (Sem função de clique) */
@@ -238,12 +246,12 @@
     transition: color 0.2s ease;
 }
 
-/* Posicionamento nas laterais da foto */
+/* Posicionamento fixo absoluto nas laterais da foto */
 .visual-esquerda {
-    left: 10px;
+    left: 10px !important;
 }
 .visual-direita {
-    right: 10px;
+    right: 10px !important;
 }
 
 /* Faz as setas brilharem de leve quando o usuário passar o mouse em cima do card do produto */
