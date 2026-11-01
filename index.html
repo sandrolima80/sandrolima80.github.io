@@ -57,23 +57,33 @@
     <main class="catalogo">
 
         <!-- PRODUTO 1: TANQUE DE COMBUSTÍVEL -->
-        <div class="produto-card class-produto" 
-             data-preco="100.00" 
-             data-link-cartao="https://mercadopago.com.br" 
-             data-link-pix="https://mercadopago.com.br">
-            <div>
-                <img src="tanque_combustivel-1.jpg" alt="Tanque de Combustível Cromado 1:14" onclick="abrirZoom(this)">
-                <img src="tanque_combustivel-2.jpg" alt="Tanque Cromado 1:14" onclick="abrirZoom(this)">
-                <h2>Tanque de Combustível Cromado - Escala 1:14</h2>
-                <p class="descricao">Fabricado em ABS de alta resistência com acabamento cromado espelhado de alto brilho. Acompanha suportes em cinta flexível (TPU) e parafusos reais.</p>
-            </div>
-            <div>
-                <div class="info-frete-card info-frete-texto">🚚 Frete...</div>
-                <div class="preco preco-texto">R$ 100,00</div>
-                <a href="#" target="_blank" class="btn-mercado-pago btn-cartao" style="background-color: #009ee3; margin-bottom: 12px;">💳 Comprar no Cartão</a>
-                <a href="#" target="_blank" class="btn-mercado-pago btn-pix" style="background-color: #00b159;">🟢 Pagar no Pix</a>
-            </div>
+<div class="produto-card class-produto" 
+     data-preco="100.00" 
+     data-link-cartao="https://mercadopago.com.br" 
+     data-link-pix="https://mercadopago.com.br">
+    <div>
+        <!-- CONTAINER DA IMAGEM COM AS SETAS VISUAIS -->
+        <div class="container-foto-catalogo">
+            <span class="seta-visual visual-esquerda">&lsaquo;</span>
+            <img src="tanque_combustivel-1.jpg" alt="Tanque Cromado 1:14 - Vista Lateral" onclick="abrirZoom(this)">
+            <span class="seta-visual visual-direita">&rsaquo;</span>
+            
+            <!-- Imagens adicionais continuam aqui guardadas para o zoom -->
+            <img src="tanque_combustivel-2.jpg" alt="Tanque Cromado 1:14 - Vista Superior" onclick="abrirZoom(this)">
+           
         </div>
+        
+        <h2>Tanque de Combustível Cromado - Escala 1:14</h2>
+        <p class="descricao">Fabricado em ABS de alta resistência com acabamento cromado espelhado de alto brilho. Acompanha suportes em cinta flexível (TPU) e parafusos reais.</p>
+    </div>
+    <div>
+        <div class="info-frete-card info-frete-texto">🚚 Frete...</div>
+        <div class="preco preco-texto">R$ 100,00</div>
+        <a href="#" target="_blank" class="btn-mercado-pago btn-cartao" style="background-color: #009ee3; margin-bottom: 12px;">💳 Comprar no Cartão</a>
+        <a href="#" target="_blank" class="btn-mercado-pago btn-pix" style="background-color: #00b159;">🟢 Pagar no Pix</a>
+    </div>
+</div>
+
 
         <!-- PRODUTO 2: PAR DE PARA-LAMAS -->
         <div class="produto-card class-produto" 
