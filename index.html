@@ -120,7 +120,17 @@
             
             <!-- VALOR BASE DO PRODUTO (Substitua pelos seus valores reais) -->
             <div class="preco">R$ 100,00</div>
-            
+                        <!-- CAMPO DE CEP NO PRODUTO -->
+            <div style="margin: 15px 0; text-align: left; background-color: #222; padding: 12px; border-radius: 6px; border: 1px solid #333;">
+                <label for="cep" style="font-size: 0.85em; color: #aaa; display: block; margin-bottom: 5px;">Calcular Frete (CEP):</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="cep" placeholder="00000-000" style="padding: 8px; border-radius: 4px; border: 1px solid #444; background-color: #000; color: #fff; width: 60%;">
+                    <a href="https://correios.com.br" target="_blank" style="background-color: #444; color: white; padding: 8px; text-decoration: none; font-size: 0.85em; font-weight: bold; border-radius: 4px; text-align: center; flex-grow: 1;">
+                        Calcular
+                    </a>
+                </div>
+            </div>
+
             <!-- BOTÃO 1: CARTÃO PARCELADO (Link do MP configurado em até 10x sem juros) -->
             <a href="COLE_AQUI_O_LINK_DO_CARTAO_10X" target="_blank" class="btn-mercado-pago" style="background-color: #009ee3; margin-bottom: 12px;">
                 💳 Comprar em até 10x de R$ 10,00 sem juros
