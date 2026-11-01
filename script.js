@@ -94,31 +94,34 @@ function atualizarTodosOsProdutos(valorFrete, regiao, uf) {
     produtos.forEach((produto, index) => {
         const precoProduto = parseFloat(produto.getAttribute('data-preco'));
         
-        // CÁLCULOS DOS VALORES
-        const totalCartao = precoProduto + valorFrete;
-        const valorPrestacao = totalCartao / 10;
-        const totalPix = totalCartao * (1 - descontoPix);
+        // SOMA INTEGRAL: (Produto + Frete)
+        const totalGeral = precoProduto + valorFrete;
+        const valorPrestacao = totalGeral / 10;
+        const totalPixComDesconto = totalGeral * (1 - descontoPix);
 
         const pNum = index + 1;
         
-        // 1. Atualiza o Preço Base em destaque (Valor apenas da peça)
+        // Atualiza a visualização do preço da peça
         document.getElementById(`preco-base-p${pNum}`).innerText = `Peça: R$ ${precoProduto.toFixed(2).replace('.', ',')}`;
 
-        // 2. Linha do valor do frete (abaixo do preço base)
+        // Linha do valor do frete
         const txtFrete = valorFrete === 0 ? "🚚 Valor do frete: A combinar / Grátis" : `🚚 Valor do frete para ${regiao} (${uf}): R$ ${valorFrete.toFixed(2).replace('.', ',')}`;
         produto.querySelector('.info-frete-texto').innerText = txtFrete;
 
-        // 3. Linha do Cartão com parcelas
-        document.getElementById(`linha-cartao-p${pNum}`).innerText = `Valor em 10x sem juros: R$ ${totalCartao.toFixed(2).replace('.', ',')} (10x de R$ ${valorPrestacao.toFixed(2).replace('.', ',')})`;
+        // Linha do Cartão parcelado baseado no total integral
+        document.getElementById(`linha-cartao-p${pNum}`).innerText = `Valor em 10x sem juros: R$ ${totalGeral.toFixed(2).replace('.', ',')} (10x de R$ ${valorPrestacao.toFixed(2).replace('.', ',')})`;
         
-        // 4. Última linha: Pix com desconto total
-        document.getElementById(`linha-pix-p${pNum}`).innerText = `No Pix 10% de desconto: R$ ${totalPix.toFixed(2).replace('.', ',')}`;
+        // Linha do Pix com o desconto calculado sobre o total integral
+        document.getElementById(`linha-pix-p${pNum}`).innerText = `No Pix 10% de desconto: R$ ${totalPixComDesconto.toFixed(2).replace('.', ',')}`;
 
-        // Força a atualização do link de pagamento com base na escolha do cliente
-        const seletorAtivo = produto.querySelector(`input[name="forma-pago-p${pNum}"]:checked`);
-        forçarLinkBotaoUnico(produto, seletorAtivo ? seletorAtivo.value : 'cartao');
+        // Altera o link do botão único para enviar o valor somado exato para o Mercado Pago
+        const linkBaseCheckout = produto.getAttribute('data-link-cartao');
+        const btnComprar = produto.querySelector('.btn-comprar-unico');
+        
+        btnComprar.href = `${linkBaseCheckout}?pref_id=${SUA_PUBLIC_KEY}&amount=${totalGeral.toFixed(2)}`;
     });
 }
+
 
 
 // Monitora qual bolinha o cliente marcou e troca o link do botão na hora
