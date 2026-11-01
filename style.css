@@ -258,14 +258,6 @@
 .produto-card.class-produto:hover .seta-visual {
     color: rgba(255, 255, 255, 0.95);
 }
-/* Estilo para as novas linhas explicativas de preço */
-.detalhe-preco-linha {
-    font-size: 0.95em;
-    color: #ddd;
-    text-align: left;
-    margin-bottom: 6px;
-    line-height: 1.3;
-}
 /* Emblema atrativo com borda de linha sólida para o valor base da peça */
 .preco-base-badge {
     font-size: 1.4em;
@@ -290,7 +282,3 @@
     border-bottom: 1px solid #222; /* Linha sólida fina separadora */
     padding-bottom: 4px;
 }
-
-
-
-
