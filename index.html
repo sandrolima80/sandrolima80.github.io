@@ -84,10 +84,11 @@
             margin-bottom: 30px;
             border: 2px solid #333;
         }
-        header img {
-            max-width: 220px;
-            height: auto;
-            margin-bottom: 15px;
+        .logo-reserva {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #009ee3;
+            margin-bottom: 5px;
         }
         header h1 {
             margin: 0;
@@ -119,12 +120,17 @@
             flex-direction: column;
             justify-content: space-between;
         }
-        .produto-card img {
-            max-width: 100%;
-            height: auto;
+        .img-reserva {
+            width: 100%;
+            height: 180px;
+            background-color: #222;
             border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3em;
             margin-bottom: 15px;
-            border: 1px solid #222;
+            border: 1px solid #333;
         }
         .produto-card h2 {
             font-size: 1.3em;
@@ -196,7 +202,7 @@
 
     <!-- CONTEÚDO PRINCIPAL DO SITE -->
     <header>
-        <img src="logo.png" alt="Rota Réplicas Logo">
+        <div class="logo-reserva">🛠️</div>
         <h1>Rota Réplicas</h1>
         <p>Peças exclusivas e alta customização na escala 1:14</p>
     </header>
@@ -209,7 +215,7 @@
              data-link-cartao="https://mercadopago.com.br" 
              data-link-pix="https://mercadopago.com.br">
             <div>
-                <img src="tanque-114.jpg" alt="Tanque de Combustível Cromado 1:14">
+                <div class="img-reserva">🚛</div>
                 <h2>Tanque de Combustível Cromado - Escala 1:14</h2>
                 <p class="descricao">Fabricado em ABS de alta resistência com acabamento cromado espelhado de alto brilho. Acompanha suportes em cinta flexível (TPU) e parafusos reais.</p>
             </div>
@@ -227,7 +233,7 @@
              data-link-cartao="https://mercadopago.com.br" 
              data-link-pix="https://mercadopago.com.br">
             <div>
-                <img src="paralamas-114.jpg" alt="Par de Para-lamas Traseiros 1:14">
+                <div class="img-reserva">⚙️</div>
                 <h2>Par de Para-lamas Traseiros - Escala 1:14</h2>
                 <p class="descricao">Modelagem exclusiva com acabamento fosco realista. Compatível com chassi padrão Tamiya. Alta flexibilidade para aguentar impactos.</p>
             </div>
@@ -271,8 +277,9 @@
             if (r2 === "57") return { uf: 'AL', regiao: 'Alagoas' };
             if (r2 === "58") return { uf: 'PB', regiao: 'Paraíba' };
             if (r2 === "59") return { uf: 'RN', regiao: 'Rio Grande do Norte' };
-            if (r2 >= "60" && r2 <= "63") return { uf: 'CE', regiao: 'Ceará' };
-            if (r2 === "64") return { uf: 'PI', regiao: 'Piauí' };
+
+if (r2 >= "60" && r2 <= "63") return { uf: 'CE', regiao: 'Ceará' };
+if (r2 === "64") return { uf: 'PI', regiao: 'Piauí' };
 if (r2 === "65") return { uf: 'MA', regiao: 'Maranhão' };
 if (r2 >= "66" && r2 <= "67") return { uf: 'PA', regiao: 'Pará' };
 if (r2 === "68") {
@@ -313,7 +320,6 @@ document.getElementById('modal-erro').innerText = "Digitando... (insira os 8 dí
 }
 }
 function pularCep() {
-// Destrava usando Frete Grátis/A combinar
 atualizarTodosOsProdutos(0, "Combinar Retirada", "GRÁTIS");
 document.getElementById('modal-cep').style.display = 'none';
 }
@@ -335,7 +341,5 @@ produto.querySelector('.btn-pix').innerHTML = 🟢 Pagar no Pix por R$ ${totalPi
 produto.querySelector('.btn-pix').href = ${linkBasePix}?price=${totalPix};
 });
 }
-// Executa uma vez com valor zero antes de digitar o CEP
 atualizarTodosOsProdutos(0, "", "");
-
     </script>
