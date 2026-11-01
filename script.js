@@ -1,4 +1,4 @@
-<script>
+
         const descontoPix = 0.10;
 
         const tabelaFretePorEstado = {
@@ -131,4 +131,4 @@
             document.getElementById('lightbox').style.display = 'none';
         }
 
-    </script>
+    
