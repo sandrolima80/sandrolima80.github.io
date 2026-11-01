@@ -1,10 +1,12 @@
 
- // CONFIGURAÇÕES BASE DO E-COMMERCE
+// CONFIGURAÇÕES BASE DO E-COMMERCE
 const descontoPix = 0.10;
 let valorFreteGlobal = 0;
 
-// INSERÇÃO DA SUA PUBLIC KEY
-const SUA_PUBLIC_KEY = 'APP_USR-8477fe81-98de-40ce-ab2e-4e1b93a3d204';
+// INICIALIZAÇÃO HOMOLOGADA DO MERCADO PAGO COM A SUA CHAVE
+const mp = new MercadoPago('APP_USR-8477fe81-98de-40ce-ab2e-4e1b93a3d204', {
+    locale: 'pt-BR'
+});
 
 const tabelaFretePorEstado = {
     'SP': 15.00, 'RJ': 25.00, 'MG': 25.00, 'ES': 25.00,
@@ -94,101 +96,66 @@ function atualizarTodosOsProdutos(valorFrete, regiao, uf) {
     produtos.forEach((produto, index) => {
         const precoProduto = parseFloat(produto.getAttribute('data-preco'));
         
-        // SOMA INTEGRAL: (Produto + Frete)
         const totalGeral = precoProduto + valorFrete;
         const valorPrestacao = totalGeral / 10;
         const totalPixComDesconto = totalGeral * (1 - descontoPix);
 
         const pNum = index + 1;
         
-        // Atualiza a visualização do preço da peça
         document.getElementById(`preco-base-p${pNum}`).innerText = `Peça: R$ ${precoProduto.toFixed(2).replace('.', ',')}`;
 
-        // Linha do valor do frete
         const txtFrete = valorFrete === 0 ? "🚚 Valor do frete: A combinar / Grátis" : `🚚 Valor do frete para ${regiao} (${uf}): R$ ${valorFrete.toFixed(2).replace('.', ',')}`;
         produto.querySelector('.info-frete-texto').innerText = txtFrete;
 
-        // Linha do Cartão parcelado baseado no total integral
         document.getElementById(`linha-cartao-p${pNum}`).innerText = `Valor em 10x sem juros: R$ ${totalGeral.toFixed(2).replace('.', ',')} (10x de R$ ${valorPrestacao.toFixed(2).replace('.', ',')})`;
-        
-        // Linha do Pix com o desconto calculado sobre o total integral
         document.getElementById(`linha-pix-p${pNum}`).innerText = `No Pix 10% de desconto: R$ ${totalPixComDesconto.toFixed(2).replace('.', ',')}`;
 
-        // MONTAGEM DO LINK DE CHECKOUT CORRETO
+        // Vincula a abertura nativa do checkout do Mercado Pago com o valor somado
         const btnComprar = produto.querySelector('.btn-comprar-unico');
-        const nomeProduto = produto.querySelector('h2').innerText;
-
-        // Gerador de link direto de Checkout Pro do Mercado Pago que aceita valores do site e permite pagar sem conta
-        btnComprar.href = `https://mercadopago.com.br{SUA_PUBLIC_KEY}&title=${encodeURIComponent(nomeProduto)}&price=${totalGeral.toFixed(2)}&quantity=1&currency_id=BRL`;
+        btnComprar.onclick = function(e) {
+            e.preventDefault();
+            
+            const nomeProduto = produto.querySelector('h2').innerText;
+            
+            // Abre o painel integrado oficial do Mercado Pago na tela do cliente
+            mp.checkout({
+                preference: {
+                    items: [{
+                        title: nomeProduto,
+                        unit_price: parseFloat(totalGeral.toFixed(2)),
+                        quantity: 1,
+                        currency_id: 'BRL'
+                    }]
+                },
+                autoOpen: true
+            });
+        };
     });
 }
 
-
-
-
-// Monitora qual bolinha o cliente marcou e troca o link do botão na hora
-function atualizarBotaoUnico(elementoRadio) {
-    const cardProduto = elementoRadio.closest('.class-produto');
-    forçarLinkBotaoUnico(cardProduto, elementoRadio.value);
-}
-
-function forçarLinkBotaoUnico(cardProduto, formaPagamento) {
-    const precoProduto = parseFloat(cardProduto.getAttribute('data-preco'));
-    const linkBaseCartao = cardProduto.getAttribute('data-link-cartao');
-    const linkBasePix = cardProduto.getAttribute('data-link-pix');
-    const btnComprar = cardProduto.querySelector('.btn-comprar-unico');
-
-    const totalCartao = precoProduto + valorFreteGlobal;
-    const totalPix = totalCartao * (1 - descontoPix);
-
-    if (formaPagamento === 'pix') {
-        btnComprar.href = `${linkBasePix}?pref_id=${SUA_PUBLIC_KEY}&amount=${totalPix.toFixed(2)}`;
-        btnComprar.style.backgroundColor = '#00b159'; // Muda para verde Pix
-    } else {
-        btnComprar.href = `${linkBaseCartao}?pref_id=${SUA_PUBLIC_KEY}&amount=${totalCartao.toFixed(2)}`;
-        btnComprar.style.backgroundColor = '#009ee3'; // Muda para azul Cartão
-    }
-}
-
-// VARIÁVEIS LOCAIS PARA CONTROLE DO CARROSSEL DE ZOOM
+// LÓGICA DO ZOOM (LIGHTBOX)
 let imagensProdutosLista = [];
 let indiceImagemAtual = 0;
 
-// LÓGICA DO ZOOM (LIGHTBOX) CORRIGIDA PARA RODAR APENAS DENTRO DO MESMO PRODUTO
 function abrirZoom(elementoImg) {
     const lightbox = document.getElementById('lightbox');
     const imagemZoom = document.getElementById('imagem-zoom');
-    
-    // Encontra o card do produto dono dessa imagem
     const cardProdutoPai = elementoImg.closest('.class-produto');
-    
-    // Captura apenas as imagens que estão DENTRO desse produto específico
     const imagensDesteProduto = cardProdutoPai.querySelectorAll('img');
     imagensProdutosLista = Array.from(imagensDesteProduto);
-    
-    // Descobre o índice da foto clicada dentro do grupo desse produto
     indiceImagemAtual = imagensProdutosLista.indexOf(elementoImg);
     
-    // Alimenta o zoom com a foto atual
     imagemZoom.src = elementoImg.src;
     imagemZoom.alt = elementoImg.alt;
-    
     lightbox.style.display = 'flex';
 }
 
 function mudarImagemZoom(direcao, evento) {
-    // Evita que o clique nas setas feche a janela
     evento.stopPropagation();
-    
     indiceImagemAtual += direcao;
     
-    // Faz a rotação infinita presa apenas às fotos deste produto
-    if (indiceImagemAtual >= imagensProdutosLista.length) {
-        indiceImagemAtual = 0;
-    }
-    if (indiceImagemAtual < 0) {
-        indiceImagemAtual = imagensProdutosLista.length - 1;
-    }
+    if (indiceImagemAtual >= imagensProdutosLista.length) indiceImagemAtual = 0;
+    if (indiceImagemAtual < 0) indiceImagemAtual = imagensProdutosLista.length - 1;
     
     const novaImagem = imagensProdutosLista[indiceImagemAtual];
     const imagemZoom = document.getElementById('imagem-zoom');
@@ -200,9 +167,9 @@ function fecharZoom() {
     document.getElementById('lightbox').style.display = 'none';
 }
 
-
 // Inicializa a vitrine
 atualizarTodosOsProdutos(0, "", "");
+
 
 
 
