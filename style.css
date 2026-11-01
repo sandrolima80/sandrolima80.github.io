@@ -212,5 +212,10 @@
             border: 2px solid #333;
             cursor: default;
         }
+        /* Esconde as imagens adicionais do catálogo para não quebrar o layout */
+        .produto-card img:not(:first-of-type) {
+            display: none !important;
+        }
+
 
 
