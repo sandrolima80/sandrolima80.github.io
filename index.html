@@ -187,9 +187,46 @@
             font-size: 0.9em;
             border-top: 1px solid #222;
         }
+                /* Estilo para mudar o cursor para lupa em cima das imagens dos produtos */
+        .produto-card img {
+            cursor: zoom-in;
+            transition: transform 0.2s ease;
+        }
+        .produto-card img:hover {
+            transform: scale(1.02);
+        }
+
+        /* Estrutura da Janela de Zoom (Lightbox) */
+        .lightbox-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            cursor: zoom-out;
+        }
+        .lightbox-overlay img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            border: 2px solid #333;
+            cursor: default;
+        }
+
     </style>
 </head>
 <body>
+
+        <!-- JANELA DE ZOOM PARA AS IMAGENS (LIGHTBOX) -->
+    <div class="lightbox-overlay" id="lightbox" onclick="fecharZoom()">
+        <img id="imagem-zoom" src="" alt="Imagem Expandida" onclick="event.stopPropagation()">
+    </div>
 
         <!-- JANELA DE SOLICITAÇÃO DE CEP (CORRIGIDA) -->
     <div class="modal-cep-overlay" id="modal-cep" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0b0b0b; display: flex; justify-content: center; align-items: center; z-index: 9999;">
@@ -232,7 +269,7 @@
              data-link-cartao="https://mercadopago.com.br" 
              data-link-pix="https://mercadopago.com.br">
             <div>
-                <div class="img-reserva">🚛</div>
+                 <img src="tanque de combustivell_1.jpg" alt="Tanque de Combustível Cromado 1:14" onclick="abrirZoom(this)"> 
                 <h2>Tanque de Combustível Cromado - Escala 1:14</h2>
                 <p class="descricao">Fabricado em ABS de alta resistência com acabamento cromado espelhado de alto brilho. Acompanha suportes em cinta flexível (TPU) e parafusos reais.</p>
             </div>
@@ -419,5 +456,23 @@
         }
         
         atualizarTodosOsProdutos(0, "", "");
+                // Funções para controle do Zoom da Imagem (Lightbox)
+        function abrirZoom(elementoImg) {
+            const lightbox = document.getElementById('lightbox');
+            const imagemZoom = document.getElementById('imagem-zoom');
+            
+            // Passa o caminho da imagem clicada para a janela grande
+            imagemZoom.src = elementoImg.src;
+            imagemZoom.alt = elementoImg.alt;
+            
+            // Exibe a janela de zoom
+            lightbox.style.display = 'flex';
+        }
+
+        function fecharZoom() {
+            // Esconde a janela ao clicar fora da imagem
+            document.getElementById('lightbox').style.display = 'none';
+        }
+
     </script>
 
