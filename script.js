@@ -113,12 +113,11 @@ function atualizarTodosOsProdutos(valorFrete, regiao, uf) {
         // Linha do Pix com o desconto calculado sobre o total integral
         document.getElementById(`linha-pix-p${pNum}`).innerText = `No Pix 10% de desconto: R$ ${totalPixComDesconto.toFixed(2).replace('.', ',')}`;
 
-        // MONTAGEM DO LINK DE CHECKOUT CORRETO
+        // Altera o link do botão único para enviar o valor somado exato para o Mercado Pago
+        const linkBaseCheckout = produto.getAttribute('data-link-cartao');
         const btnComprar = produto.querySelector('.btn-comprar-unico');
-        const nomeProduto = produto.querySelector('h2').innerText;
-
-        // Gerador de link direto de Checkout Pro do Mercado Pago que aceita valores do site e permite pagar sem conta
-        btnComprar.href = `https://mercadopago.com.br{SUA_PUBLIC_KEY}&title=${encodeURIComponent(nomeProduto)}&price=${totalGeral.toFixed(2)}&quantity=1&currency_id=BRL`;
+        
+        btnComprar.href = `${linkBaseCheckout}?pref_id=${SUA_PUBLIC_KEY}&amount=${totalGeral.toFixed(2)}`;
     });
 }
 
