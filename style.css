@@ -216,6 +216,40 @@
         .produto-card.class-produto img:not(:first-of-type) {
             display: none !important;
         }
+        /* Container para posicionar as setas por cima da imagem */
+.container-foto-catalogo {
+    position: relative;
+    width: 100%;
+    display: inline-block;
+}
+
+/* Estilo geral das setas visuais do catálogo (Sem função de clique) */
+.seta-visual {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2.5em;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: bold;
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.9);
+    pointer-events: none; /* Faz o clique passar direto para a foto abaixo dela */
+    user-select: none;
+    z-index: 5;
+    transition: color 0.2s ease;
+}
+
+/* Posicionamento nas laterais da foto */
+.visual-esquerda {
+    left: 10px;
+}
+.visual-direita {
+    right: 10px;
+}
+
+/* Faz as setas brilharem de leve quando o usuário passar o mouse em cima do card do produto */
+.produto-card.class-produto:hover .seta-visual {
+    color: rgba(255, 255, 255, 0.95);
+}
 
 
 
