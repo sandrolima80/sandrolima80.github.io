@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Réplicas de Caminhão</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        header {
+            text-align: center;
+            background-color: #222;
+            color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        header p {
+            margin: 10px 0 0 0;
+            color: #ccc;
+        }
+        .catalogo {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .produto-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 320px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .produto-card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .produto-card h2 {
+            font-size: 1.4em;
+            margin: 10px 0;
+            color: #111;
+        }
+        .descricao {
+            font-size: 0.9em;
+            color: #666;
+            min-height: 50px;
+        }
+        .preco {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #27ae60;
+            margin: 15px 0;
+        }
+        .btn-mercado-pago {
+            background-color: #009ee3;
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 6px;
+            display: block;
+            transition: background 0.2s;
+        }
+        .btn-mercado-pago:hover {
+            background-color: #007bb6;
+        }
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #777;
+            font-size: 0.9em;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Loja de Réplicas de Caminhão</h1>
+        <p>Modelos artesanais e exclusivos. Pague parcelado pelo Mercado Pago!</p>
+    </header>
+
+    <main class="catalogo">
+
+        <!-- PRODUTO 1 -->
+        <div class="produto-card">
+            <!-- Nome da sua foto aqui (ex: scania.jpg) -->
+            <img src="scania.jpg" alt="Réplica Scania R440">
+            <h2>Scania R440 - Escala 1:32</h2>
+            <p class="descricao">Feito em resina de alta resistência, pintura automotiva e interior detalhado. Abrem as portas.</p>
+            <div class="preco">R$ 350,00</div>
+            
+            <!-- COLOQUE SEU LINK DO MERCADO PAGO ABAIXO ONDE DIZ href="..." -->
+            <a href="COLE_AQUI_O_LINK_DO_MERCADO_PAGO_1" target="_blank" class="btn-mercado-pago">
+                Comprar / Parcelar no Cartão
+            </a>
+        </div>
+
+        <!-- PRODUTO 2 -->
+        <div class="produto-card">
+            <!-- Nome da sua foto aqui (ex: volvo.jpg) -->
+            <img src="volvo.jpg" alt="Réplica Volvo FH540">
+            <h2>Volvo FH 540 - Escala 1:32</h2>
+            <p class="descricao">Detalhes cromados, para-lamas realistas e chassi detalhado. Modelo perfeito para colecionadores.</p>
+            <div class="preco">R$ 380,00</div>
+            
+            <!-- COLOQUE SEU LINK DO MERCADO PAGO ABAIXO ONDE DIZ href="..." -->
+            <a href="COLE_AQUI_O_LINK_DO_MERCADO_PAGO_2" target="_blank" class="btn-mercado-pago">
+                Comprar / Parcelar no Cartão
+            </a>
+        </div>
+
+        <!-- PRODUTO 3 -->
+        <div class="produto-card">
+            <!-- Nome da sua foto aqui (ex: mercedes.jpg) -->
+            <img src="mercedes.jpg" alt="Réplica Mercedes Actros">
+            <h2>Mercedes Actros - Escala 1:32</h2>
+            <p class="descricao">Pintura metálica personalizada, rodas que giram e acabamento de luxo com alta fidelidade.</p>
+            <div class="preco">R$ 400,00</div>
+            
+            <!-- COLOQUE SEU LINK DO MERCADO PAGO ABAIXO ONDE DIZ href="..." -->
+            <a href="COLE_AQUI_O_LINK_DO_MERCADO_PAGO_3" target="_blank" class="btn-mercado-pago">
+                Comprar / Parcelar no Cartão
+            </a>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Loja de Réplicas de Caminhão - Todos os direitos reservados.</p>
+        <p>Servidor local rodando direto de casa.</p>
+    </footer>
+
+</body>
+</html>
