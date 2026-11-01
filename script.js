@@ -1,9 +1,9 @@
 
-  // CONFIGURAÇÕES BASE DO E-COMMERCE
+ // CONFIGURAÇÕES BASE DO E-COMMERCE
 const descontoPix = 0.10;
 let valorFreteGlobal = 0;
 
-// INSERÇÃO DA SUA PUBLIC KEY (Substitua pelo seu código copiado do painel)
+// INSERÇÃO DA SUA PUBLIC KEY
 const SUA_PUBLIC_KEY = 'APP_USR-8477fe81-98de-40ce-ab2e-4e1b93a3d204';
 
 const tabelaFretePorEstado = {
@@ -91,39 +91,64 @@ function fecharModalEMoverParaCatalogo() {
 function atualizarTodosOsProdutos(valorFrete, regiao, uf) {
     const produtos = document.querySelectorAll('.class-produto');
 
-    produtos.forEach(produto => {
+    produtos.forEach((produto, index) => {
         const precoProduto = parseFloat(produto.getAttribute('data-preco'));
+        
+        // 1. CÁLCULO DO CARTÃO: (Produto + Frete)
         const totalCartao = precoProduto + valorFrete;
-        const totalPix = (precoProduto * (1 - descontoPix)) + valorFrete;
-        const valorParcela = totalCartao / 10;
+        const valorPrestacao = totalCartao / 10;
+        
+        // 2. CÁLCULO DO PIX SOLICITADO: Desconto em cima do resultado da soma (Produto + Frete)
+        const totalPix = totalCartao * (1 - descontoPix);
 
-        const txtFrete = valorFrete === 0 ? "🚚 Retirada ou Frete a combinar" : `🚚 Frete para ${regiao} (${uf}): R$ ${valorFrete.toFixed(2).replace('.', ',')}`;
+        // Identificadores das linhas baseado no index do produto
+        const pNum = index + 1;
+        
+        // Atualiza as linhas de texto solicitadas por você
+        document.getElementById(`linha-cartao-p${pNum}`).innerText = `Valor em 10x sem juros: R$ ${totalCartao.toFixed(2).replace('.', ',')} (10x de R$ ${valorPrestacao.toFixed(2).replace('.', ',')})`;
+        document.getElementById(`linha-pix-p${pNum}`).innerText = `No Pix 10% de desconto: R$ ${totalPix.toFixed(2).replace('.', ',')}`;
+
+        // 3. Linha do valor do frete
+        const txtFrete = valorFrete === 0 ? "🚚 Valor do frete: A combinar / Grátis" : `🚚 Valor do frete para ${regiao} (${uf}): R$ ${valorFrete.toFixed(2).replace('.', ',')}`;
         produto.querySelector('.info-frete-texto').innerText = txtFrete;
-        produto.querySelector('.preco-texto').innerText = `R$ ${totalCartao.toFixed(2).replace('.', ',')}`;
-        
-        const btnCartao = produto.querySelector('.btn-cartao');
-        const btnPix = produto.querySelector('.btn-pix');
-        
-        btnCartao.innerHTML = `💳 Comprar em até 10x de R$ ${valorParcela.toFixed(2).replace('.', ',')} sem juros`;
-        btnPix.innerHTML = `🟢 Pagar no Pix por R$ ${totalPix.toFixed(2).replace('.', ',')}`;
 
-        // Redirecionamento limpo para o ambiente seguro do Mercado Pago repassando o total calculado
-        const linkBaseCartao = produto.getAttribute('data-link-cartao');
-        const linkBasePix = produto.getAttribute('data-link-pix');
-
-        btnCartao.href = `${linkBaseCartao}?pref_id=${SUA_PUBLIC_KEY}&amount=${totalCartao.toFixed(2)}`;
-        btnPix.href = `${linkBasePix}?pref_id=${SUA_PUBLIC_KEY}&amount=${totalPix.toFixed(2)}`;
+        // Força a atualização do link do botão baseado na escolha ativa
+        const seletorAtivo = produto.querySelector(`input[name="forma-pago-p${pNum}"]:checked`);
+        forçarLinkBotaoUnico(produto, seletorAtivo ? seletorAtivo.value : 'cartao');
     });
 }
 
-// LÓGICA DO ZOOM (LIGHTBOX) TOTALMENTE RESTAURADA E FUNCIONAL
+// Monitora qual bolinha o cliente marcou e troca o link do botão na hora
+function atualizarBotaoUnico(elementoRadio) {
+    const cardProduto = elementoRadio.closest('.class-produto');
+    forçarLinkBotaoUnico(cardProduto, elementoRadio.value);
+}
+
+function forçarLinkBotaoUnico(cardProduto, formaPagamento) {
+    const precoProduto = parseFloat(cardProduto.getAttribute('data-preco'));
+    const linkBaseCartao = cardProduto.getAttribute('data-link-cartao');
+    const linkBasePix = cardProduto.getAttribute('data-link-pix');
+    const btnComprar = cardProduto.querySelector('.btn-comprar-unico');
+
+    const totalCartao = precoProduto + valorFreteGlobal;
+    const totalPix = totalCartao * (1 - descontoPix);
+
+    if (formaPagamento === 'pix') {
+        btnComprar.href = `${linkBasePix}?pref_id=${SUA_PUBLIC_KEY}&amount=${totalPix.toFixed(2)}`;
+        btnComprar.style.backgroundColor = '#00b159'; // Muda para verde Pix
+    } else {
+        btnComprar.href = `${linkBaseCartao}?pref_id=${SUA_PUBLIC_KEY}&amount=${totalCartao.toFixed(2)}`;
+        btnComprar.style.backgroundColor = '#009ee3'; // Muda para azul Cartão
+    }
+}
+
+// LÓGICA DO ZOOM (LIGHTBOX)
 let imagensProdutosLista = [];
 let indiceImagemAtual = 0;
 
 function abrirZoom(elementoImg) {
     const lightbox = document.getElementById('lightbox');
     const imagemZoom = document.getElementById('imagem-zoom');
-    
     const todasAsImagens = document.querySelectorAll('.class-produto img');
     imagensProdutosLista = Array.from(todasAsImagens);
     indiceImagemAtual = imagensProdutosLista.indexOf(elementoImg);
@@ -135,7 +160,7 @@ function abrirZoom(elementoImg) {
 
 function mudarImagemZoom(direcao, evento) {
     evento.stopPropagation();
-    indiceImagemAtual += direcao;
+    indiceImagemAtual += direction = direcao;
     
     if (indiceImagemAtual >= imagensProdutosLista.length) indiceImagemAtual = 0;
     if (indiceImagemAtual < 0) indiceImagemAtual = imagensProdutosLista.length - 1;
@@ -152,6 +177,7 @@ function fecharZoom() {
 
 // Inicializa a vitrine
 atualizarTodosOsProdutos(0, "", "");
+
 
 
     
