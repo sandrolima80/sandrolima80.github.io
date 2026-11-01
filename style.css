@@ -258,6 +258,14 @@
 .produto-card.class-produto:hover .seta-visual {
     color: rgba(255, 255, 255, 0.95);
 }
+/* Estilo para as novas linhas explicativas de preço */
+.detalhe-preco-linha {
+    font-size: 0.95em;
+    color: #ddd;
+    text-align: left;
+    margin-bottom: 6px;
+    line-height: 1.3;
+}
 
 
 
