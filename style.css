@@ -213,9 +213,9 @@
             cursor: default;
         }
        /* Esconde as imagens adicionais dentro dos cards de produto, mantendo visível apenas a primeira */
-.produto-card.class-produto img:not(:first-of-type) {
-    display: none !important;
-}
+        .produto-card.class-produto img:not(:first-of-type) {
+            display: none !important;
+        }
 
 
 
