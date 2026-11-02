@@ -121,33 +121,6 @@ function atualizarTodosOsProdutos(valorFrete, regiao, uf) {
     });
 }
 
-
-
-
-// Monitora qual bolinha o cliente marcou e troca o link do botão na hora
-function atualizarBotaoUnico(elementoRadio) {
-    const cardProduto = elementoRadio.closest('.class-produto');
-    forçarLinkBotaoUnico(cardProduto, elementoRadio.value);
-}
-
-function forçarLinkBotaoUnico(cardProduto, formaPagamento) {
-    const precoProduto = parseFloat(cardProduto.getAttribute('data-preco'));
-    const linkBaseCartao = cardProduto.getAttribute('data-link-cartao');
-    const linkBasePix = cardProduto.getAttribute('data-link-pix');
-    const btnComprar = cardProduto.querySelector('.btn-comprar-unico');
-
-    const totalCartao = precoProduto + valorFreteGlobal;
-    const totalPix = totalCartao * (1 - descontoPix);
-
-    if (formaPagamento === 'pix') {
-        btnComprar.href = `${linkBasePix}?pref_id=${SUA_PUBLIC_KEY}&amount=${totalPix.toFixed(2)}`;
-        btnComprar.style.backgroundColor = '#00b159'; // Muda para verde Pix
-    } else {
-        btnComprar.href = `${linkBaseCartao}?pref_id=${SUA_PUBLIC_KEY}&amount=${totalCartao.toFixed(2)}`;
-        btnComprar.style.backgroundColor = '#009ee3'; // Muda para azul Cartão
-    }
-}
-
 // VARIÁVEIS LOCAIS PARA CONTROLE DO CARROSSEL DE ZOOM
 let imagensProdutosLista = [];
 let indiceImagemAtual = 0;
