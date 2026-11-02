@@ -239,10 +239,10 @@ async function checkoutMercadoPago() {
       
 
         if (dados && dados.init_point) {
-            //window.open(dados.init_point, "_blank");
+            window.open(dados.init_point, "_blank");
        } else {
-            //console.error("Resposta do servidor:", dados);
-            //alert("Erro ao ler os dados de pagamento devolvidos pelo servidor.");
+            console.error("Resposta do servidor:", dados);
+            alert("Erro ao ler os dados de pagamento devolvidos pelo servidor.");
        }
         } catch (erro) {
             console.error("Erro na comunicação com o PHP:", erro);
