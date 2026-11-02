@@ -14,10 +14,8 @@ const tabelaFretePorEstado = {
 // CONTROLE DA INTERFACE DO CARRINHO
 function alternarCarrinho(abrir) {
     const menu = document.getElementById("carrinho-menu");
-    if (menu) {
-        if (abrir) menu.classList.add("aberto");
-        else menu.classList.remove("aberto");
-    }
+    if (abrir) menu.classList.add("aberto");
+    else menu.classList.remove("aberto");
 }
 
 // ADICIONAR ITEM AO CARRINHO
@@ -27,11 +25,11 @@ function adicionarAoCarrinho(id, titulo, preco, foto) {
     if (itemExistente) {
         itemExistente.quantidade += 1;
     } else {
-        carrinho.push({ id, titulo, preco, foto, quantity: 1 });
+        carrinho.push({ id, titulo, preco, foto, quantidade: 1 });
     }
 
     atualizarRenderizacaoCarrinho();
-    alternarCarrinho(true);
+    alternarCarrinho(true); // Abre o carrinho automaticamente para feedback
 }
 
 // REMOVER ITEM
@@ -40,81 +38,80 @@ function removerDoCarrinho(id) {
     atualizarRenderizacaoCarrinho();
 }
 
-// ATUALIZA VALORES E RENDERIZA NA TELA
+// ATUALIZA VALORES E RENDERIZA NA TELA (CORRIGIDO COM VALIDAÇÃO DE CEP)
 function atualizarRenderizacaoCarrinho() {
     const listaHtml = document.getElementById("carrinho-itens-lista");
     const contador = document.getElementById("carrinho-contador");
     
-    if (contador) {
-        contador.innerText = Array.isArray(carrinho) ? carrinho.reduce((acc, item) => acc + item.quantidade, 0) : 0;
-    }
+    contador.innerText = Array.isArray(carrinho) ? carrinho.reduce((acc, item) => acc + item.quantidade, 0) : 0;
 
     if (!carrinho || carrinho.length === 0) {
-        if (listaHtml) listaHtml.innerHTML = `<p style="color: #aaa; text-align: center; margin-top: 20px;">Seu carrinho está vazio.</p>`;
+        listaHtml.innerHTML = `<p style="color: #aaa; text-align: center; margin-top: 20px;">Seu carrinho está vazio.</p>`;
         document.getElementById("cart-subtotal").innerText = "R$ 0,00";
         document.getElementById("cart-total-geral").innerText = "R$ 0,00";
         document.getElementById("cart-total-pix").innerText = "R$ 0,00";
-        
-        const btnCheckout = document.getElementById("btn-finalizar-checkout");
-        if (btnCheckout) {
-            btnCheckout.disabled = true;
-            btnCheckout.innerText = "🔒 Carrinho Vazio";
-            btnCheckout.style.backgroundColor = "#555";
-        }
+        document.getElementById("btn-finalizar-checkout").disabled = true;
+        document.getElementById("btn-finalizar-checkout").innerText = "🔒 Carrinho Vazio";
         return;
     }
 
-    if (listaHtml) {
-        listaHtml.innerHTML = "";
-        carrinho.forEach(item => {
-            listaHtml.innerHTML += `
-                <div class="item-carrinho-linha">
-                    <img src="${item.foto}" alt="${item.titulo}">
-                    <div class="item-detalhes">
-                        <h4>${item.titulo}</h4>
-                        <span>${item.quantidade}x R$ ${item.preco.toFixed(2).replace('.', ',')}</span>
-                    </div>
-                    <button class="btn-remover-item" onclick="removerDoCarrinho('${item.id}')">&times;</button>
+    // Renderiza itens
+    listaHtml.innerHTML = "";
+    carrinho.forEach(item => {
+        listaHtml.innerHTML += `
+            <div class="item-carrinho-linha">
+                <img src="${item.foto}" alt="${item.titulo}">
+                <div class="item-detalhes">
+                    <h4>${item.titulo}</h4>
+                    <span>${item.quantidade}x R$ ${item.preco.toFixed(2).replace('.', ',')}</span>
                 </div>
-            `;
-        });
-    }
+                <button class="btn-remover-item" onclick="removerDoCarrinho('${item.id}')">&times;</button>
+            </div>
+        `;
+    });
 
+    // Cálculos
     const subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
     const totalGeral = subtotal + valorFreteGlobal;
-    const totalPix = totalGeral * 0.90;
+    const totalPix = totalGeral * 0.90; // 10% de Desconto
 
+    // Inserção na tela
     document.getElementById("cart-subtotal").innerText = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+    
+    // Elemento do botão de fechar pedido
     const btnCheckout = document.getElementById("btn-finalizar-checkout");
 
+    // VALIDAÇÃO EXPLICITA DO CEP / FRETE
     if (estadoSelecionadoTxt === "Aguardando CEP" || ufGlobal === "") {
         document.getElementById("cart-frete-txt").innerText = "🚚 Frete:";
         document.getElementById("cart-frete-valor").innerText = "Por favor, digite o frete";
-        document.getElementById("cart-frete-valor").style.color = "#ff4d4d";
+        document.getElementById("cart-frete-valor").style.color = "#ff4d4d"; // Texto em vermelho de alerta
+        
         document.getElementById("cart-total-geral").innerText = `R$ ${subtotal.toFixed(2).replace('.', ',')} + frete`;
         document.getElementById("cart-total-pix").innerText = "Aguardando CEP...";
         
-        if (btnCheckout) {
-            btnCheckout.disabled = true;
-            btnCheckout.innerText = "⚠️ Por favor, digite o frete para continuar";
-            btnCheckout.style.backgroundColor = "#555";
-        }
+        // Bloqueia a compra até o frete ser fornecido
+        btnCheckout.disabled = true;
+        btnCheckout.innerText = "⚠️ Por favor, digite o frete para continuar";
+        btnCheckout.style.backgroundColor = "#555";
     } else {
+        // Se o frete estiver preenchido corretamente
         document.getElementById("cart-frete-txt").innerText = `🚚 Frete para ${estadoSelecionadoTxt}:`;
         document.getElementById("cart-frete-valor").innerText = valorFreteGlobal === 0 ? "GRÁTIS" : `R$ ${valorFreteGlobal.toFixed(2).replace('.', ',')}`;
         document.getElementById("cart-frete-valor").style.color = valorFreteGlobal === 0 ? "#2ecc71" : "#fff";
+        
         document.getElementById("cart-total-geral").innerText = `R$ ${totalGeral.toFixed(2).replace('.', ',')}`;
         document.getElementById("cart-total-pix").innerText = `R$ ${totalPix.toFixed(2).replace('.', ',')}`;
         
-        if (btnCheckout) {
-            btnCheckout.disabled = false;
-            btnCheckout.innerText = "🔒 Fechar Pedido via Mercado Pago";
-            btnCheckout.style.backgroundColor = "#2ecc71";
-        }
+        // Libera o botão de pagamento do Mercado Pago
+        btnCheckout.disabled = false;
+        btnCheckout.innerText = "🔒 Fechar Pedido via Mercado Pago";
+        btnCheckout.style.backgroundColor = "#2ecc71";
     }
 }
 
-// LOGICA DE RECONHECIMENTO DE CEP
+
+// LOGICA DE RECONHECIMENTO DE CEP (MANTIDA DO SEU SCRIPT)
 function descobrirEstadoPorCEP(cep) {
     const r2 = cep.substring(0, 2);
     const r3 = cep.substring(0, 3);
@@ -152,35 +149,45 @@ function descobrirEstadoPorCEP(cep) {
 }
 
 function monitorarDigitacaoCEP(input) {
+    // 1. Limpa letras e mantém apenas os números digitados
     let apenasNumeros = input.value.replace(/\D/g, "");
     
+    // 2. Aplica a máscara visual de hífen (00000-000) no campo que está sendo digitado
     if (apenasNumeros.length > 5) {
         input.value = apenasNumeros.substring(0, 5) + "-" + apenasNumeros.substring(5, 8);
     } else {
         input.value = apenasNumeros;
     }
 
+    // Identifica se estamos digitando no modal ou no carrinho
     const msgErroModal = document.getElementById('modal-erro');
     const msgErroCarrinho = document.getElementById('carrinho-cep-erro');
 
+    // 3. Verifica se completou os 8 números necessários
     if (apenasNumeros.length === 8) {
         const loc = descobrirEstadoPorCEP(apenasNumeros);
         ufGlobal = loc ? loc.uf : 'SP';
         estadoSelecionadoTxt = loc ? `${loc.regiao} (${loc.uf})` : 'São Paulo (SP)';
-        valorFreteGlobal = tabelaFretePorEstado[ufGlobal] || 15.00;
+        valorFreteGlobal = tabelaFretePorEstado[ufGlobal] || 15.00; // 🔥 Corrigido o corte aqui!
         
+        // Sincroniza o valor digitado nos dois campos da tela para não confundir o cliente
         if(document.getElementById('cep-inicial')) document.getElementById('cep-inicial').value = input.value;
         if(document.getElementById('cep-carrinho')) document.getElementById('cep-carrinho').value = input.value;
 
+        // Limpa as mensagens de erro
         if(msgErroModal) msgErroModal.innerText = "";
         if(msgErroCarrinho) msgErroCarrinho.innerText = "";
         
+        // Atualiza os cálculos da janela lateral
         atualizarRenderizacaoCarrinho();
         
-        if(document.getElementById('modal-cep')) {
-            document.getElementById('modal-cep').style.display = 'none';
+        // Fecha o modal escondendo a tela de bloqueio
+        const modal = document.getElementById('modal-cep');
+        if(modal) {
+            modal.style.display = 'none';
         }
     } else {
+        // Alerta de digitação em andamento dependendo de onde o usuário está digitando
         if (input.id === "cep-inicial" && msgErroModal) {
             msgErroModal.style.color = "#aaa";
             msgErroModal.innerText = "Digitando... (insira os 8 dígitos)";
@@ -191,52 +198,75 @@ function monitorarDigitacaoCEP(input) {
     }
 }
 
+
+
 function pularCep() {
     valorFreteGlobal = 0;
     ufGlobal = "";
-    estadoSelecionadoTxt = "Aguardando CEP";
+    estadoSelecionadoTxt = "Aguardando CEP"; // Mantém o estado pendente para exibir os alertas no carrinho
     atualizarRenderizacaoCarrinho();
-    if(document.getElementById('modal-cep')) {
-        document.getElementById('modal-cep').style.display = 'none';
-    }
+    document.getElementById('modal-cep').style.display = 'none';
 }
 
-// INTEGRAÇÃO DO CHECKOUT COM O SEU PHP LOCAL VIA NGROK
+
 async function checkoutMercadoPago() {
     const btn = document.getElementById("btn-finalizar-checkout");
-    if (!btn) return;
-    
     btn.innerText = "🔄 Gerando Checkout Seguro...";
     btn.disabled = true;
 
     try {
-        const urlSuaApi = "https://ngrok-free.dev";
-
-        const resposta = await fetch(urlSuaApi, {
+        // Dispara a requisição direto para o seu servidor PHP atualizado
+        // Se estiver testando via Ngrok, altere para a sua URL do Ngrok: https://.../loja/criar-pagamento.php
+        const resposta = await fetch("https://wriggle-scrounger-defense.ngrok-free.dev", {
             method: "POST",
             headers: { 
-                "Content-Type": "application/json",
-                "ngrok-skip-browser-warning": "true"
+                "Content-Type": "application/json" 
+                 "ngrok-skip-browser-warning": "true" // 🔥 ISSO PULA A TELA DE AVISO DO NGROK!
             },
             body: JSON.stringify({
-                itens: carrinho, 
-                frete: valorFreteGlobal 
+                itens: carrinho, // Envia o array com id, titulo, preco e quantidade
+                frete: valorFreteGlobal // Envia o valor do frete do estado selecionado
             })
         });
 
+        // Como seu PHP agora retorna JSON puro, processamos nativamente
         const dados = await resposta.json();
 
         if (dados && dados.init_point) {
+            // Abre a tela de pagamento oficial e segura do Mercado Pago em uma nova aba
             window.open(dados.init_point, "_blank");
         } else {
-console.error("Resposta do servidor:", dados);
-alert("Erro ao ler os dados de pagamento devolvidos pelo servidor.");
+            console.error("Resposta inesperada do PHP:", dados);
+            alert("Erro ao ler os dados de pagamento devolvidos pelo servidor.");
+        }
+    } catch (erro) {
+        console.error("Erro na comunicação com o PHP:", erro);
+        alert("Não foi possível conectar ao seu servidor PHP para fechar o pedido.");
+    } finally {
+        btn.innerText = "🔒 Fechar Pedido via Mercado Pago";
+        btn.disabled = false;
+    }
 }
-} catch (erro) {
-console.error("Erro na comunicação com o PHP:", erro);
-alert("Não foi possível conectar ao seu servidor PHP para fechar o pedido.");
-} finally {
-btn.innerText = "🔒 Fechar Pedido via Mercado Pago";
-btn.disabled = false;
+
+
+
+// Lógica de Zoom mantida do seu script original
+let imagensProdutosLista = [];
+let indiceImagemAtual = 0;
+function abrirZoom(elementoImg) {
+    const lightbox = document.getElementById('lightbox');
+    const imagemZoom = document.getElementById('imagem-zoom');
+    const cardProdutoPai = elementoImg.closest('.class-produto');
+    imagensProdutosLista = Array.from(cardProdutoPai.querySelectorAll('img'));
+    indiceImagemAtual = imagensProdutosLista.indexOf(elementoImg);
+    imagemZoom.src = elementoImg.src;
+    lightbox.style.display = 'flex';
 }
+function fecharZoom() { document.getElementById('lightbox').style.display = 'none'; }
+function mudarImagemZoom(dir, ev) {
+    ev.stopPropagation();
+    indiceImagemAtual += dir;
+    if (indiceImagemAtual >= imagensProdutosLista.length) indiceImagemAtual = 0;
+    if (indiceImagemAtual < 0) indiceImagemAtual = imagensProdutosLista.length - 1;
+    document.getElementById('imagem-zoom').src = imagensProdutosLista[indiceImagemAtual].src;
 } 
