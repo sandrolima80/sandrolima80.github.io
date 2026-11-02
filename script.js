@@ -208,7 +208,7 @@ async function checkoutMercadoPago() {
     btn.disabled = true;
 
     try {
-        const urlSuaApi = "https://ngrok-free.dev";
+        const urlSuaApi = "https://wriggle-scrounger-defense.ngrok-free.dev/loja/criar-pagamento.php";
 
         const resposta = await fetch(urlSuaApi, {
             method: "POST",
