@@ -238,3 +238,25 @@ btn.innerText = "🔒 Fechar Pedido via Mercado Pago";
 btn.disabled = false;
 }
 }
+
+// Lógica de Zoom mantida do seu script original
+let imagensProdutosLista = [];
+let indiceImagemAtual = 0;
+function abrirZoom(elementoImg) {
+    const lightbox = document.getElementById('lightbox');
+    const imagemZoom = document.getElementById('imagem-zoom');
+    const cardProdutoPai = elementoImg.closest('.class-produto');
+    imagensProdutosLista = Array.from(cardProdutoPai.querySelectorAll('img'));
+    indiceImagemAtual = imagensProdutosLista.indexOf(elementoImg);
+    imagemZoom.src = elementoImg.src;
+    lightbox.style.display = 'flex';
+}
+function fecharZoom() { document.getElementById('lightbox').style.display = 'none'; }
+function mudarImagemZoom(dir, ev) {
+    ev.stopPropagation();
+    indiceImagemAtual += dir;
+    if (indiceImagemAtual >= imagensProdutosLista.length) indiceImagemAtual = 0;
+    if (indiceImagemAtual < 0) indiceImagemAtual = imagensProdutosLista.length - 1;
+    document.getElementById('imagem-zoom').src = imagensProdutosLista[indiceImagemAtual].src;
+}
+
