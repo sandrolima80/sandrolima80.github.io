@@ -1,237 +1,209 @@
+/* ==========================================================================
+   1. ESTILOS DA TELA DE BLOQUEIO (MODAL DE CEP)
+   ========================================================================== */
+.modal-cep-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0b0b0b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+.modal-cep-content {
+    background-color: #1a1a1a;
+    border: 2px solid #333;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+}
+.modal-cep-content h2 {
+    margin-top: 0;
+    color: #fff;
+    font-size: 1.6em;
+}
+.modal-cep-content p {
+    color: #aaa;
+    font-size: 0.95em;
+    margin-bottom: 20px;
+}
+.modal-input-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+.modal-cep-content input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: #2b2b2b;
+    color: #fff;
+    border: 1px solid #444;
+    font-size: 1.1em;
+    text-align: center;
+}
+.modal-status {
+    font-size: 0.9em;
+    color: #ff6b6b;
+    display: block;
+    min-height: 20px;
+}
+.btn-pular {
+    display: block;
+    margin: 15px auto 0 auto;
+    background: none;
+    border: none;
+    color: #009ee3;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 1em;
+    font-weight: bold;
+}
 
-        /* Estilos da Tela de Bloqueio (Modal de CEP) */
-        .modal-cep-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #0b0b0b;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.4s ease, visibility 0.4s ease;
-        }
-        .modal-cep-content {
-            background-color: #1a1a1a;
-            border: 2px solid #333;
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.7);
-        }
-        .modal-cep-content h2 {
-            margin-top: 0;
-            color: #fff;
-            font-size: 1.6em;
-        }
-        .modal-cep-content p {
-            color: #aaa;
-            font-size: 0.95em;
-            margin-bottom: 20px;
-        }
-        .modal-input-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .modal-cep-content input {
-            flex: 1;
-            padding: 12px;
-            border-radius: 8px;
-            background-color: #2b2b2b;
-            color: #fff;
-            border: 1px solid #444;
-            font-size: 1.1em;
-            text-align: center;
-        }
-        .modal-cep-content button {
-            padding: 12px 20px;
-            background-color: #009ee3;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1em;
-            transition: background 0.2s;
-        }
-        .modal-cep-content button:hover {
-            background-color: #0081ba;
-        }
-        .modal-status {
-            font-size: 0.9em;
-            color: #ff6b6b;
-            display: block;
-            min-height: 20px;
-        }
+/* ==========================================================================
+   2. ESTRUTURA PRINCIPAL DO SITE (CATÁLOGO)
+   ========================================================================== */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #111;
+    margin: 0;
+    padding: 20px;
+    color: #eee;
+}
+header {
+    text-align: center;
+    background-color: #000;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    border: 2px solid #333;
+}
+header img {
+    max-width: 220px;
+    height: auto;
+    margin-bottom: 15px;
+}
+header h1 {
+    margin: 0;
+    font-size: 2em;
+    color: #fff;
+    letter-spacing: 1px;
+}
+header p {
+    margin: 10px 0 0 0;
+    color: #aaa;
+    font-size: 1.1em;
+}
+.badge-seguranca-mp {
+    background-color: #161616;
+    border: 1px solid #009ee3;
+    border-radius: 8px;
+    padding: 15px;
+    max-width: 500px;
+    margin: 20px auto 0 auto;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+.catalogo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    justify-content: center;
+}
+.produto-card {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 340px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.produto-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #222;
+    cursor: zoom-in;
+    transition: transform 0.2s ease;
+}
+.produto-card img:hover {
+    transform: scale(1.02);
+}
+.produto-card h2 {
+    font-size: 1.3em;
+    margin: 10px 0;
+    color: #fff;
+}
+.descricao {
+    font-size: 0.95em;
+    color: #bbb;
+    min-height: 60px;
+    line-height: 1.4;
+    text-align: left;
+    margin-bottom: 15px;
+}
 
-        /* Estrutura Principal do Site */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #111;
-            margin: 0;
-            padding: 20px;
-            color: #eee;
-        }
-        header {
-            text-align: center;
-            background-color: #000;
-            padding: 30px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            border: 2px solid #333;
-        }
-        header img {
-            max-width: 220px;
-            height: auto;
-            margin-bottom: 15px;
-        }
-        header h1 {
-            margin: 0;
-            font-size: 2em;
-            color: #fff;
-            letter-spacing: 1px;
-        }
-        header p {
-            margin: 10px 0 0 0;
-            color: #aaa;
-            font-size: 1.1em;
-        }
-        .catalogo {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 25px;
-            justify-content: center;
-        }
-        .produto-card {
-            background-color: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 12px;
-            padding: 20px;
-            max-width: 340px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .produto-card img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border: 1px solid #222;
-        }
-        .produto-card h2 {
-            font-size: 1.3em;
-            margin: 10px 0;
-            color: #fff;
-        }
-        .descricao {
-            font-size: 0.95em;
-            color: #bbb;
-            min-height: 60px;
-            line-height: 1.4;
-            text-align: left;
-            margin-bottom: 15px;
-        }
-        
-        /* Informações do Frete Gravado no Card */
-        .info-frete-card {
-            background-color: #222;
-            padding: 10px;
-            border-radius: 6px;
-            margin: 10px 0;
-            font-size: 0.9em;
-            color: #00b159;
-            border: 1px solid #333;
-            font-weight: bold;
-        }
+/* Emblema com borda de linha sólida para o valor base da peça */
+.preco-base-badge {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #fff;
+    background-color: #000;
+    border: 2px solid #333;
+    border-radius: 8px;
+    padding: 8px 20px;
+    display: inline-block;
+    margin: 10px auto 15px auto;
+    letter-spacing: 0.5px;
+}
 
-        .preco {
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #fff;
-            margin: 10px 0 15px 0;
-        }
-        .btn-mercado-pago {
-            color: white;
-            padding: 14px 20px;
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 8px;
-            display: block;
-            text-align: center;
-            font-size: 1em;
-            transition: opacity 0.2s;
-        }
-        .btn-mercado-pago:hover {
-            opacity: 0.9;
-        }
-        footer {
-            text-align: center;
-            margin-top: 60px;
-            padding: 20px;
-            color: #666;
-            font-size: 0.9em;
-            border-top: 1px solid #222;
-        }
-                /* Estilo para mudar o cursor para lupa em cima das imagens dos produtos */
-        .produto-card img {
-            cursor: zoom-in;
-            transition: transform 0.2s ease;
-        }
-        .produto-card img:hover {
-            transform: scale(1.02);
-        }
+/* Botão adicionar ao carrinho no card */
+.btn-adicionar-carrinho {
+    background-color: #009ee3;
+    color: white;
+    border: none;
+    padding: 14px 20px;
+    width: 100%;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.btn-adicionar-carrinho:hover {
+    background-color: #007bb3;
+}
 
-        /* Estrutura da Janela de Zoom (Lightbox) */
-        .lightbox-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-            cursor: zoom-out;
-        }
-        .lightbox-overlay img {
-            max-width: 90%;
-            max-height: 90%;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
-            border: 2px solid #333;
-            cursor: default;
-        }
-       /* Esconde as imagens adicionais dentro dos cards de produto, mantendo visível apenas a primeira */
-        .produto-card.class-produto img:not(:first-of-type) {
-            display: none !important;
-        }
-       /* Container para posicionar as setas por cima da imagem */
+/* ==========================================================================
+   3. ESTRUTURA DO CARROSSEL DE IMAGENS E ZOOM (LIGHTBOX)
+   ========================================================================== */
 .container-foto-catalogo {
     position: relative;
     width: 100%;
-    display: block; /* Alterado para block para travar a estrutura no mobile */
-    overflow: hidden; /* Garante que nada saia do alinhamento do card */
+    display: block;
+    overflow: hidden;
 }
-
-/* Garante que a primeira imagem ocupe a largura correta sem empurrar as setas */
 .container-foto-catalogo img:first-of-type {
     width: 100%;
     height: auto;
     display: block;
 }
-
-/* Estilo geral das setas visuais do catálogo (Sem função de clique) */
+.produto-card.class-produto img:not(:first-of-type) {
+    display: none !important;
+}
 .seta-visual {
     position: absolute;
     top: 50%;
@@ -240,49 +212,53 @@
     color: rgba(255, 255, 255, 0.6);
     font-weight: bold;
     text-shadow: 0 0 6px rgba(0, 0, 0, 0.9);
-    pointer-events: none; /* Faz o clique passar direto para a foto abaixo dela */
+    pointer-events: none;
     user-select: none;
     z-index: 5;
     transition: color 0.2s ease;
 }
-
-/* Posicionamento fixo absoluto nas laterais da foto */
-.visual-esquerda {
-    left: 10px !important;
-}
-.visual-direita {
-    right: 10px !important;
-}
-
-/* Faz as setas brilharem de leve quando o usuário passar o mouse em cima do card do produto */
+.visual-esquerda { left: 10px !important; }
+.visual-direita { right: 10px !important; }
 .produto-card.class-produto:hover .seta-visual {
     color: rgba(255, 255, 255, 0.95);
 }
-/* Emblema atrativo com borda de linha sólida para o valor base da peça */
-.preco-base-badge {
-    font-size: 1.4em;
-    font-weight: bold;
-    color: #fff;
-    background-color: #000;
-    border: 2px solid #333; /* Borda de linha sólida e discreta */
-    border-radius: 8px;
-    padding: 8px 20px;
-    display: inline-block;
-    margin: 10px auto 15px auto;
-    letter-spacing: 0.5px;
-}
 
-/* Ajuste das linhas explicativas de preço */
-.detalhe-preco-linha {
-    font-size: 0.95em;
-    color: #ccc;
-    text-align: left;
-    margin: 8px 0;
-    line-height: 1.4;
-    border-bottom: 1px solid #222; /* Linha sólida fina separadora */
-    padding-bottom: 4px;
+.lightbox-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
 }
-/* Ícone Flutuante */
+.lightbox-overlay img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    border: 2px solid #333;
+}
+.lightbox-btn {
+    position: absolute;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 3.5em;
+    cursor: pointer;
+    z-index: 10001;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(0,0,0,0.8);
+}
+#btn-ant { left: 20px; }
+#btn-prox { right: 20px; }
+
+/* ==========================================================================
+   4. NOVO: ESTRUTURA DO CARRINHO DE COMPRAS LATERAL E FLUTUANTE
+   ========================================================================== */
 .carrinho-icone-flutuante {
     position: fixed;
     top: 20px;
@@ -306,11 +282,10 @@
     margin-left: 5px;
 }
 
-/* Menu Lateral do Carrinho */
 .carrinho-lateral {
     position: fixed;
     top: 0;
-    right: -400px; /* Escondido */
+    right: -400px; /* Começa escondido */
     width: 380px;
     height: 100%;
     background-color: #141414;
@@ -322,7 +297,7 @@
     transition: right 0.3s ease;
 }
 .carrinho-lateral.aberto {
-    right: 0;
+    right: 0; /* Desliza para dentro da tela */
 }
 .carrinho-header {
     padding: 20px;
@@ -334,7 +309,6 @@
 .carrinho-header h3 { margin: 0; color: #fff; font-size: 1.4em; }
 .btn-fechar-carrinho { background: none; border: none; color: #fff; font-size: 2em; cursor: pointer; }
 
-/* Lista interna */
 .carrinho-itens { padding: 20px; flex-grow: 1; overflow-y: auto; }
 .item-carrinho-linha {
     display: flex;
@@ -349,28 +323,13 @@
 .item-carrinho-linha img { width: 50px; height: 50px; border-radius: 4px; object-fit: cover; }
 .item-detalhes { flex-grow: 1; color: #fff; }
 .item-detalhes h4 { margin: 0 0 5px 0; font-size: 0.95em; }
-.btn-remover-item { background: none; border: none; color: #ff4d4d; cursor: pointer; font-size: 1.1em; }
+.btn-remover-item { background: none; border: none; color: #ff4d4d; cursor: pointer; font-size: 1.5em; line-height: 1; }
 
-/* Rodapé do Carrinho */
 .carrinho-footer { padding: 20px; border-top: 1px solid #333; background: #0d0d0d; }
 .carrinho-linha-resumo { display: flex; justify-content: space-between; color: #aaa; margin-bottom: 8px; font-size: 0.95em; }
 .total-destaque { color: #fff; font-weight: bold; font-size: 1.2em; border-top: 1px solid #222; padding-top: 8px; }
 .pix-destaque { color: #2ecc71; font-weight: bold; font-size: 1.1em; }
 
-/* Botões do Catálogo e do Checkout */
-.btn-adicionar-carrinho {
-    background-color: #009ee3;
-    color: white;
-    border: none;
-    padding: 12px;
-    width: 100%;
-    border-radius: 6px;
-    font-size: 1.1em;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-.btn-adicionar-carrinho:hover { background-color: #007bb3; }
 .btn-mercado-pago-checkout {
     background-color: #2ecc71;
     color: white;
@@ -382,9 +341,18 @@
     font-weight: bold;
     cursor: pointer;
     margin-top: 15px;
+    transition: filter 0.2s;
 }
 .btn-mercado-pago-checkout:disabled { background-color: #444; cursor: not-allowed; }
+.btn-mercado-pago-checkout:not(:disabled):hover { filter: brightness(1.1); }
 
-/* Badge segurança */
-.badge-seguranca-mp { background-color: #161616; border: 1px solid #009ee3; border-radius: 8px; padding: 15px; max-width: 500px; margin: 20px auto 0 auto; text-align: center; }
+/* Footer da página */
+footer {
+    text-align: center;
+    margin-top: 60px;
+    padding: 20px;
+    color: #666;
+    font-size: 0.9em;
+    border-top: 1px solid #222;
+}
 
