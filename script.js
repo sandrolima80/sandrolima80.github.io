@@ -178,10 +178,12 @@ function monitorarDigitacaoCEP(input) {
 
 function pularCep() {
     valorFreteGlobal = 0;
-    estadoSelecionadoTxt = "Combinar / Retirada";
+    ufGlobal = "";
+    estadoSelecionadoTxt = "Aguardando CEP"; // Mantém o estado pendente para exibir os alertas no carrinho
     atualizarRenderizacaoCarrinho();
     document.getElementById('modal-cep').style.display = 'none';
 }
+
 
 // ENVIO COMPLETO DOS ITENS DO CARRINHO PARA O SEU BACKEND
 async function checkoutMercadoPago() {
