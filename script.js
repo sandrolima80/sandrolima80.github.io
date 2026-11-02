@@ -208,39 +208,44 @@ function pularCep() {
 }
 
 
-// Localize esta função no final do seu script.js e ajuste a URL do fetch:
 async function checkoutMercadoPago() {
     const btn = document.getElementById("btn-finalizar-checkout");
     btn.innerText = "🔄 Gerando Checkout Seguro...";
     btn.disabled = true;
 
     try {
-        // Aponta diretamente para o seu script PHP dentro do Apache local
-        const resposta = await fetch("https://wriggle-scrounger-defense.ngrok-free.dev", {
+        // Dispara a requisição direto para o seu servidor PHP atualizado
+        // Se estiver testando via Ngrok, altere para a sua URL do Ngrok: https://.../loja/criar-pagamento.php
+        const resposta = await fetch("http://localhost/loja/criar-pagamento.php", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+                "Content-Type": "application/json" 
+            },
             body: JSON.stringify({
-                itens: carrinho, 
-                frete: valorFreteGlobal
+                itens: carrinho, // Envia o array com id, titulo, preco e quantidade
+                frete: valorFreteGlobal // Envia o valor do frete do estado selecionado
             })
         });
 
+        // Como seu PHP agora retorna JSON puro, processamos nativamente
         const dados = await resposta.json();
 
-        if (dados.init_point) {
-            // Abre o ambiente seguro do Mercado Pago em uma nova aba
+        if (dados && dados.init_point) {
+            // Abre a tela de pagamento oficial e segura do Mercado Pago em uma nova aba
             window.open(dados.init_point, "_blank");
         } else {
-            alert("Erro ao processar o carrinho no servidor.");
+            console.error("Resposta inesperada do PHP:", dados);
+            alert("Erro ao ler os dados de pagamento devolvidos pelo servidor.");
         }
     } catch (erro) {
-        console.error("Erro na comunicação:", erro);
-        alert("Erro ao conectar com o servidor PHP.");
+        console.error("Erro na comunicação com o PHP:", erro);
+        alert("Não foi possível conectar ao seu servidor PHP para fechar o pedido.");
     } finally {
         btn.innerText = "🔒 Fechar Pedido via Mercado Pago";
         btn.disabled = false;
     }
 }
+
 
 
 // Lógica de Zoom mantida do seu script original
