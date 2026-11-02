@@ -39,37 +39,45 @@ function removerDoCarrinho(id) {
     atualizarRenderizacaoCarrinho();
 }
 
-// ATUALIZA VALORES E RENDERIZA NA TELA (CORRIGIDO COM VALIDAÇÃO DE CEP)
+// ATUALIZA VALORES E RENDERIZA NA TELA
 function atualizarRenderizacaoCarrinho() {
     const listaHtml = document.getElementById("carrinho-itens-lista");
     const contador = document.getElementById("carrinho-contador");
     
-       contador.innerText = Array.isArray(carrinho) ? carrinho.reduce((acc, item) => acc + item.quantidade, 0) : 0;
+    if (contador) {
+        contador.innerText = Array.isArray(carrinho) ? carrinho.reduce((acc, item) => acc + item.quantidade, 0) : 0;
+    }
 
-   if (!carrinho || carrinho.length === 0) {
-        listaHtml.innerHTML = `<p style="color: #aaa; text-align: center; margin-top: 20px;">Seu carrinho está vazio.</p>`;
+    if (!carrinho || carrinho.length === 0) {
+        if (listaHtml) listaHtml.innerHTML = `<p style="color: #aaa; text-align: center; margin-top: 20px;">Seu carrinho está vazio.</p>`;
         document.getElementById("cart-subtotal").innerText = "R$ 0,00";
         document.getElementById("cart-total-geral").innerText = "R$ 0,00";
         document.getElementById("cart-total-pix").innerText = "R$ 0,00";
-        document.getElementById("btn-finalizar-checkout").disabled = true;
-        document.getElementById("btn-finalizar-checkout").innerText = "🔒 Carrinho Vazio";
+        
+        const btnCheckout = document.getElementById("btn-finalizar-checkout");
+        if (btnCheckout) {
+            btnCheckout.disabled = true;
+            btnCheckout.innerText = "🔒 Carrinho Vazio";
+            btnCheckout.style.backgroundColor = "#555";
+        }
         return;
     }
 
-    // Renderiza itens
-    listaHtml.innerHTML = "";
-    carrinho.forEach(item => {
-        listaHtml.innerHTML += `
-            <div class="item-carrinho-linha">
-                <img src="${item.foto}" alt="${item.titulo}">
-                <div class="item-detalhes">
-                    <h4>${item.titulo}</h4>
-                    <span>${item.quantidade}x R$ ${item.preco.toFixed(2).replace('.', ',')}</span>
+    if (listaHtml) {
+        listaHtml.innerHTML = "";
+        carrinho.forEach(item => {
+            listaHtml.innerHTML += `
+                <div class="item-carrinho-linha">
+                    <img src="${item.foto}" alt="${item.titulo}">
+                    <div class="item-detalhes">
+                        <h4>${item.titulo}</h4>
+                        <span>${item.quantidade}x R$ ${item.preco.toFixed(2).replace('.', ',')}</span>
+                    </div>
+                    <button class="btn-remover-item" onclick="removerDoCarrinho('${item.id}')">&times;</button>
                 </div>
-                <button class="btn-remover-item" onclick="removerDoCarrinho('${item.id}')">&times;</button>
-            </div>
-        `;
-    });
+            `;
+        });
+    }
 
     const subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
     const totalGeral = subtotal + valorFreteGlobal;
