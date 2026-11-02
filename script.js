@@ -57,19 +57,21 @@ function atualizarRenderizacaoCarrinho() {
     }
 
     // Renderiza itens
-    listaHtml.innerHTML = "";
-    carrinho.forEach(item => {
-        listaHtml.innerHTML += `
-            <div class="item-carrinho-linha">
-                <img src="${item.foto}" alt="${item.titulo}">
-                <div class="item-detalhes">
-                    <h4>${item.titulo}</h4>
-                    <span>${item.quantidade}x R$ ${item.preco.toFixed(2).replace('.', ',')}</span>
+   if (listaHtml) {
+        listaHtml.innerHTML = "";
+        carrinho.forEach(item => {
+            listaHtml.innerHTML += `
+                <div class="item-carrinho-linha">
+                    <img src="${item.foto}" alt="${item.titulo}">
+                    <div class="item-detalhes">
+                        <h4>${item.titulo}</h4>
+                        <span>${item.quantidade}x R$ ${item.preco.toFixed(2).replace('.', ',')}</span>
+                    </div>
+                    <button class="btn-remover-item" onclick="removerDoCarrinho('${item.id}')">&times;</button>
                 </div>
-                <button class="btn-remover-item" onclick="removerDoCarrinho('${item.id}')">&times;</button>
-            </div>
-        `;
-    });
+            `;
+        });
+    }
 
     // Cálculos
     const subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
