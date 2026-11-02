@@ -44,9 +44,7 @@ function atualizarRenderizacaoCarrinho() {
     const listaHtml = document.getElementById("carrinho-itens-lista");
     const contador = document.getElementById("carrinho-contador");
     
-    if (contador) {
-        contador.innerText = Array.isArray(carrinho) ? carrinho.reduce((acc, item) => acc + item.quantidade, 0) : 0;
-    }
+       contador.innerText = Array.isArray(carrinho) ? carrinho.reduce((acc, item) => acc + item.quantidade, 0) : 0;
 
     if (!carrinho || carrinho.length === 0) {
         if (listaHtml) listaHtml.innerHTML = `<p style="color: #aaa; text-align: center; margin-top: 20px;">Seu carrinho está vazio.</p>`;
