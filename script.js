@@ -38,19 +38,20 @@ function removerDoCarrinho(id) {
     atualizarRenderizacaoCarrinho();
 }
 
-// ATUALIZA VALORES E RENDERIZA NA TELA
+// ATUALIZA VALORES E RENDERIZA NA TELA (CORRIGIDO COM VALIDAÇÃO DE CEP)
 function atualizarRenderizacaoCarrinho() {
     const listaHtml = document.getElementById("carrinho-itens-lista");
     const contador = document.getElementById("carrinho-contador");
     
-    contador.innerText = carrinho.reduce((acc, item) => acc + item.quantidade, 0);
+    contador.innerText = Array.isArray(carrinho) ? carrinho.reduce((acc, item) => acc + item.quantidade, 0) : 0;
 
-    if (carrinho.length === 0) {
+    if (!carrinho || carrinho.length === 0) {
         listaHtml.innerHTML = `<p style="color: #aaa; text-align: center; margin-top: 20px;">Seu carrinho está vazio.</p>`;
         document.getElementById("cart-subtotal").innerText = "R$ 0,00";
         document.getElementById("cart-total-geral").innerText = "R$ 0,00";
         document.getElementById("cart-total-pix").innerText = "R$ 0,00";
         document.getElementById("btn-finalizar-checkout").disabled = true;
+        document.getElementById("btn-finalizar-checkout").innerText = "🔒 Carrinho Vazio";
         return;
     }
 
@@ -76,13 +77,39 @@ function atualizarRenderizacaoCarrinho() {
 
     // Inserção na tela
     document.getElementById("cart-subtotal").innerText = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
-    document.getElementById("cart-frete-txt").innerText = `🚚 Frete para ${estadoSelecionadoTxt}:`;
-    document.getElementById("cart-frete-valor").innerText = valorFreteGlobal === 0 ? "GRÁTIS" : `R$ ${valorFreteGlobal.toFixed(2).replace('.', ',')}`;
-    document.getElementById("cart-total-geral").innerText = `R$ ${totalGeral.toFixed(2).replace('.', ',')}`;
-    document.getElementById("cart-total-pix").innerText = `R$ ${totalPix.toFixed(2).replace('.', ',')}`;
     
-    document.getElementById("btn-finalizar-checkout").disabled = false;
+    // Elemento do botão de fechar pedido
+    const btnCheckout = document.getElementById("btn-finalizar-checkout");
+
+    // VALIDAÇÃO EXPLICITA DO CEP / FRETE
+    if (estadoSelecionadoTxt === "Aguardando CEP" || ufGlobal === "") {
+        document.getElementById("cart-frete-txt").innerText = "🚚 Frete:";
+        document.getElementById("cart-frete-valor").innerText = "Por favor, digite o frete";
+        document.getElementById("cart-frete-valor").style.color = "#ff4d4d"; // Texto em vermelho de alerta
+        
+        document.getElementById("cart-total-geral").innerText = `R$ ${subtotal.toFixed(2).replace('.', ',')} + frete`;
+        document.getElementById("cart-total-pix").innerText = "Aguardando CEP...";
+        
+        // Bloqueia a compra até o frete ser fornecido
+        btnCheckout.disabled = true;
+        btnCheckout.innerText = "⚠️ Por favor, digite o frete para continuar";
+        btnCheckout.style.backgroundColor = "#555";
+    } else {
+        // Se o frete estiver preenchido corretamente
+        document.getElementById("cart-frete-txt").innerText = `🚚 Frete para ${estadoSelecionadoTxt}:`;
+        document.getElementById("cart-frete-valor").innerText = valorFreteGlobal === 0 ? "GRÁTIS" : `R$ ${valorFreteGlobal.toFixed(2).replace('.', ',')}`;
+        document.getElementById("cart-frete-valor").style.color = valorFreteGlobal === 0 ? "#2ecc71" : "#fff";
+        
+        document.getElementById("cart-total-geral").innerText = `R$ ${totalGeral.toFixed(2).replace('.', ',')}`;
+        document.getElementById("cart-total-pix").innerText = `R$ ${totalPix.toFixed(2).replace('.', ',')}`;
+        
+        // Libera o botão de pagamento do Mercado Pago
+        btnCheckout.disabled = false;
+        btnCheckout.innerText = "🔒 Fechar Pedido via Mercado Pago";
+        btnCheckout.style.backgroundColor = "#2ecc71";
+    }
 }
+
 
 // LOGICA DE RECONHECIMENTO DE CEP (MANTIDA DO SEU SCRIPT)
 function descobrirEstadoPorCEP(cep) {
