@@ -114,7 +114,6 @@ function atualizarRenderizacaoCarrinho() {
     }
 }
 
-
 // LOGICA DE RECONHECIMENTO DE CEP
 function descobrirEstadoPorCEP(cep) {
     const r2 = cep.substring(0, 2);
@@ -230,7 +229,6 @@ async function checkoutMercadoPago() {
         if (dados && dados.init_point) {
             window.open(dados.init_point, "_blank");
         } else {
-
 console.error("Resposta do servidor:", dados);
 alert("Erro ao ler os dados de pagamento devolvidos pelo servidor.");
 }
@@ -241,5 +239,4 @@ alert("Não foi possível conectar ao seu servidor PHP para fechar o pedido.");
 btn.innerText = "🔒 Fechar Pedido via Mercado Pago";
 btn.disabled = false;
 }
-}
-    
+} 
