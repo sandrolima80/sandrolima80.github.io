@@ -223,7 +223,9 @@ async function checkoutMercadoPago() {
             })
         });
 
-        const dados = await resposta.json();
+        const textoPuro = await resposta.text();
+        const dados = JSON.parse(textoPuro.trim()); // Limpa rebarbas do PHP e converte em JSON válido
+      
 
         if (dados && dados.init_point) {
             window.open(dados.init_point, "_blank");
