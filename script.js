@@ -149,31 +149,54 @@ function descobrirEstadoPorCEP(cep) {
 }
 
 function monitorarDigitacaoCEP(input) {
-    // 1. Cria uma variável limpa apenas com os números digitados
+    // 1. Limpa letras e mantém apenas os números digitados
     let apenasNumeros = input.value.replace(/\D/g, "");
     
-    // 2. Aplica a máscara visual de hífen no campo de texto
+    // 2. Aplica a máscara visual de hífen (00000-000) no campo que está sendo digitado
     if (apenasNumeros.length > 5) {
         input.value = apenasNumeros.substring(0, 5) + "-" + apenasNumeros.substring(5, 8);
     } else {
         input.value = apenasNumeros;
     }
 
-    // 3. Importante: Testa o comprimento da variável APENAS com números (deve ser 8)
+    // Identifica se estamos digitando no modal ou no carrinho
+    const msgErroModal = document.getElementById('modal-erro');
+    const msgErroCarrinho = document.getElementById('carrinho-cep-erro');
+
+    // 3. Verifica se completou os 8 números necessários
     if (apenasNumeros.length === 8) {
         const loc = descobrirEstadoPorCEP(apenasNumeros);
         ufGlobal = loc ? loc.uf : 'SP';
         estadoSelecionadoTxt = loc ? `${loc.regiao} (${loc.uf})` : 'São Paulo (SP)';
         valorFreteGlobal = tabelaFretePorEstado[ufGlobal] || 15.00;
         
-        // Atualiza o carrinho e destrava a tela fechando o modal
+        // Sincroniza o valor digitado nos dois campos da tela para não confundir o cliente
+        if(document.getElementById('cep-inicial')) document.getElementById('cep-inicial').value = input.value;
+        if(document.getElementById('cep-carrinho')) document.getElementById('cep-carrinho').value = input.value;
+
+        // Limpa as mensagens de erro
+        if(msgErroModal) msgErroModal.innerText = "";
+        if(msgErroCarrinho) msgErroCarrinho.innerText = "";
+        
+        // Atualiza os cálculos da janela lateral
         atualizarRenderizacaoCarrinho();
-        document.getElementById('modal-cep').style.display = 'none';
+        
+        // Fecha o modal caso ele ainda estivesse aberto na tela
+        if(document.getElementById('modal-cep')) {
+            document.getElementById('modal-cep').style.display = 'none';
+        }
     } else {
-        document.getElementById('modal-erro').style.color = "#ff4d4d"; // Muda para vermelho para indicar digitação
-        document.getElementById('modal-erro').innerText = "Digitando... (insira os 8 dígitos)";
+        // Alerta de digitação em andamento dependendo de onde o usuário está digitando
+        if (input.id === "cep-inicial" && msgErroModal) {
+            msgErroModal.style.color = "#aaa";
+            msgErroModal.innerText = "Digitando... (insira os 8 dígitos)";
+        } else if (input.id === "cep-carrinho" && msgErroCarrinho) {
+            msgErroCarrinho.style.color = "#aaa";
+            msgErroCarrinho.innerText = "Digitando CEP...";
+        }
     }
 }
+
 
 
 function pularCep() {
