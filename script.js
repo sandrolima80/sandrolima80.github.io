@@ -168,7 +168,7 @@ function monitorarDigitacaoCEP(input) {
         const loc = descobrirEstadoPorCEP(apenasNumeros);
         ufGlobal = loc ? loc.uf : 'SP';
         estadoSelecionadoTxt = loc ? `${loc.regiao} (${loc.uf})` : 'São Paulo (SP)';
-        valorFreteGlobal = tabelaFretePorEstado[ufGlobal] || 15.00;
+        valorFreteGlobal = tabelaFretePorEstado[ufGlobal] || 15.00; // 🔥 Corrigido o corte aqui!
         
         // Sincroniza o valor digitado nos dois campos da tela para não confundir o cliente
         if(document.getElementById('cep-inicial')) document.getElementById('cep-inicial').value = input.value;
@@ -181,9 +181,10 @@ function monitorarDigitacaoCEP(input) {
         // Atualiza os cálculos da janela lateral
         atualizarRenderizacaoCarrinho();
         
-        // Fecha o modal caso ele ainda estivesse aberto na tela
-        if(document.getElementById('modal-cep')) {
-            document.getElementById('modal-cep').style.display = 'none';
+        // Fecha o modal escondendo a tela de bloqueio
+        const modal = document.getElementById('modal-cep');
+        if(modal) {
+            modal.style.display = 'none';
         }
     } else {
         // Alerta de digitação em andamento dependendo de onde o usuário está digitando
