@@ -208,19 +208,19 @@ function pularCep() {
 }
 
 
-// ENVIO COMPLETO DOS ITENS DO CARRINHO PARA O SEU BACKEND
+// Localize esta função no final do seu script.js e ajuste a URL do fetch:
 async function checkoutMercadoPago() {
     const btn = document.getElementById("btn-finalizar-checkout");
     btn.innerText = "🔄 Gerando Checkout Seguro...";
     btn.disabled = true;
 
     try {
-        // Envia a lista inteira de produtos selecionados + frete calculado
-        const resposta = await fetch("http://localhost:3000/api/criar-preferencia-multipla", {
+        // Aponta diretamente para o seu script PHP dentro do Apache local
+        const resposta = await fetch("https://wriggle-scrounger-defense.ngrok-free.dev", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                itens: carrinho, // Contém ID, título, preço, quantidade de cada item
+                itens: carrinho, 
                 frete: valorFreteGlobal
             })
         });
@@ -228,18 +228,20 @@ async function checkoutMercadoPago() {
         const dados = await resposta.json();
 
         if (dados.init_point) {
+            // Abre o ambiente seguro do Mercado Pago em uma nova aba
             window.open(dados.init_point, "_blank");
         } else {
             alert("Erro ao processar o carrinho no servidor.");
         }
     } catch (erro) {
-        console.error(erro);
-        alert("Erro ao conectar com o servidor.");
+        console.error("Erro na comunicação:", erro);
+        alert("Erro ao conectar com o servidor PHP.");
     } finally {
         btn.innerText = "🔒 Fechar Pedido via Mercado Pago";
         btn.disabled = false;
     }
 }
+
 
 // Lógica de Zoom mantida do seu script original
 let imagensProdutosLista = [];
