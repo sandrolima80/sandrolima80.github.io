@@ -26,7 +26,7 @@ function adicionarAoCarrinho(id, titulo, preco, foto) {
     if (itemExistente) {
         itemExistente.quantidade += 1;
     } else {
-        carrinho.push({ id, titulo, preco, foto, quantity: 1 });
+        carrinho.push({ id, titulo, preco, foto, quantidade: 1 });
     }
 
     atualizarRenderizacaoCarrinho();
