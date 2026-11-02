@@ -1,9 +1,7 @@
-  // CONFIGURAÇÕES BASE DO E-COMMERCE
-const descontoPix = 0.10;
+let carrinho = [];
 let valorFreteGlobal = 0;
-
-// INSERÇÃO DA SUA PUBLIC KEY
-const SUA_PUBLIC_KEY = 'APP_USR-8477fe81-98de-40ce-ab2e-4e1b93a3d204';
+let estadoSelecionadoTxt = "Aguardando CEP";
+let ufGlobal = "";
 
 const tabelaFretePorEstado = {
     'SP': 15.00, 'RJ': 25.00, 'MG': 25.00, 'ES': 25.00,
@@ -13,10 +11,83 @@ const tabelaFretePorEstado = {
     'AM': 55.00, 'PA': 55.00, 'AC': 55.00, 'RO': 55.00, 'RR': 55.00, 'AP': 55.00, 'TO': 48.00
 };
 
+// CONTROLE DA INTERFACE DO CARRINHO
+function alternarCarrinho(abrir) {
+    const menu = document.getElementById("carrinho-menu");
+    if (abrir) menu.classList.add("aberto");
+    else menu.classList.remove("aberto");
+}
+
+// ADICIONAR ITEM AO CARRINHO
+function adicionarAoCarrinho(id, titulo, preco, foto) {
+    const itemExistente = carrinho.find(item => item.id === id);
+
+    if (itemExistente) {
+        itemExistente.quantidade += 1;
+    } else {
+        carrinho.push({ id, titulo, preco, foto, quantidade: 1 });
+    }
+
+    atualizarRenderizacaoCarrinho();
+    alternarCarrinho(true); // Abre o carrinho automaticamente para feedback
+}
+
+// REMOVER ITEM
+function removerDoCarrinho(id) {
+    carrinho = carrinho.filter(item => item.id !== id);
+    atualizarRenderizacaoCarrinho();
+}
+
+// ATUALIZA VALORES E RENDERIZA NA TELA
+function atualizarRenderizacaoCarrinho() {
+    const listaHtml = document.getElementById("carrinho-itens-lista");
+    const contador = document.getElementById("carrinho-contador");
+    
+    contador.innerText = carrinho.reduce((acc, item) => acc + item.quantidade, 0);
+
+    if (carrinho.length === 0) {
+        listaHtml.innerHTML = `<p style="color: #aaa; text-align: center; margin-top: 20px;">Seu carrinho está vazio.</p>`;
+        document.getElementById("cart-subtotal").innerText = "R$ 0,00";
+        document.getElementById("cart-total-geral").innerText = "R$ 0,00";
+        document.getElementById("cart-total-pix").innerText = "R$ 0,00";
+        document.getElementById("btn-finalizar-checkout").disabled = true;
+        return;
+    }
+
+    // Renderiza itens
+    listaHtml.innerHTML = "";
+    carrinho.forEach(item => {
+        listaHtml.innerHTML += `
+            <div class="item-carrinho-linha">
+                <img src="${item.foto}" alt="${item.titulo}">
+                <div class="item-detalhes">
+                    <h4>${item.titulo}</h4>
+                    <span>${item.quantidade}x R$ ${item.preco.toFixed(2).replace('.', ',')}</span>
+                </div>
+                <button class="btn-remover-item" onclick="removerDoCarrinho('${item.id}')">&times;</button>
+            </div>
+        `;
+    });
+
+    // Cálculos
+    const subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
+    const totalGeral = subtotal + valorFreteGlobal;
+    const totalPix = totalGeral * 0.90; // 10% de Desconto
+
+    // Inserção na tela
+    document.getElementById("cart-subtotal").innerText = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+    document.getElementById("cart-frete-txt").innerText = `🚚 Frete para ${estadoSelecionadoTxt}:`;
+    document.getElementById("cart-frete-valor").innerText = valorFreteGlobal === 0 ? "GRÁTIS" : `R$ ${valorFreteGlobal.toFixed(2).replace('.', ',')}`;
+    document.getElementById("cart-total-geral").innerText = `R$ ${totalGeral.toFixed(2).replace('.', ',')}`;
+    document.getElementById("cart-total-pix").innerText = `R$ ${totalPix.toFixed(2).replace('.', ',')}`;
+    
+    document.getElementById("btn-finalizar-checkout").disabled = false;
+}
+
+// LOGICA DE RECONHECIMENTO DE CEP (MANTIDA DO SEU SCRIPT)
 function descobrirEstadoPorCEP(cep) {
     const r2 = cep.substring(0, 2);
     const r3 = cep.substring(0, 3);
-    
     if (r2 >= "01" && r2 <= "19") return { uf: 'SP', regiao: 'São Paulo' };
     if (r2 >= "20" && r2 <= "28") return { uf: 'RJ', regiao: 'Rio de Janeiro' };
     if (r2 === "29") return { uf: 'ES', regiao: 'Espírito Santo' };
@@ -52,128 +123,82 @@ function descobrirEstadoPorCEP(cep) {
 
 function monitorarDigitacaoCEP(input) {
     let v = input.value.replace(/\D/g, "");
-    
-    if (v.length > 5) {
-        input.value = v.substring(0, 5) + "-" + v.substring(5, 8);
-    } else {
-        input.value = v;
-    }
+    if (v.length > 5) input.value = v.substring(0, 5) + "-" + v.substring(5, 8);
+    else input.value = v;
 
     if (v.length === 8) {
-        const localizacao = descobrirEstadoPorCEP(v);
-        const uf = localizacao ? localizacao.uf : 'SP';
-        const regiaoNome = localizacao ? localizacao.regiao : 'Brasil';
-        valorFreteGlobal = tabelaFretePorEstado[uf] || 35.00;
-
-        atualizarTodosOsProdutos(valorFreteGlobal, regiaoNome, uf);
-        fecharModalEMoverParaCatalogo();
+        const loc = descobrirEstadoPorCEP(v);
+        ufGlobal = loc ? loc.uf : 'SP';
+        estadoSelecionadoTxt = loc ? `${loc.regiao} (${loc.uf})` : 'Brasil';
+        valorFreteGlobal = tabelaFretePorEstado[ufGlobal] || 35.00;
+        
+        atualizarRenderizacaoCarrinho();
+        document.getElementById('modal-cep').style.display = 'none';
     } else {
-        document.getElementById('modal-erro').style.color = "#aaa";
         document.getElementById('modal-erro').innerText = "Digitando... (insira os 8 dígitos)";
     }
 }
 
 function pularCep() {
     valorFreteGlobal = 0;
-    atualizarTodosOsProdutos(0, "Combinar Retirada", "GRÁTIS");
-    fecharModalEMoverParaCatalogo();
+    estadoSelecionadoTxt = "Combinar / Retirada";
+    atualizarRenderizacaoCarrinho();
+    document.getElementById('modal-cep').style.display = 'none';
 }
 
-function fecharModalEMoverParaCatalogo() {
-    document.getElementById('modal-cep').style.display = 'none';
-    const catalogoSection = document.querySelector('.catalogo');
-    if (catalogoSection) {
-        catalogoSection.scrollIntoView({ behavior: 'smooth' });
+// ENVIO COMPLETO DOS ITENS DO CARRINHO PARA O SEU BACKEND
+async function checkoutMercadoPago() {
+    const btn = document.getElementById("btn-finalizar-checkout");
+    btn.innerText = "🔄 Gerando Checkout Seguro...";
+    btn.disabled = true;
+
+    try {
+        // Envia a lista inteira de produtos selecionados + frete calculado
+        const resposta = await fetch("http://localhost:3000/api/criar-preferencia-multipla", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                itens: carrinho, // Contém ID, título, preço, quantidade de cada item
+                frete: valorFreteGlobal
+            })
+        });
+
+        const dados = await resposta.json();
+
+        if (dados.init_point) {
+            window.open(dados.init_point, "_blank");
+        } else {
+            alert("Erro ao processar o carrinho no servidor.");
+        }
+    } catch (erro) {
+        console.error(erro);
+        alert("Erro ao conectar com o servidor.");
+    } finally {
+        btn.innerText = "🔒 Fechar Pedido via Mercado Pago";
+        btn.disabled = false;
     }
 }
 
-function atualizarTodosOsProdutos(valorFrete, regiao, uf) {
-    const produtos = document.querySelectorAll('.class-produto');
-
-    produtos.forEach((produto, index) => {
-        const precoProduto = parseFloat(produto.getAttribute('data-preco'));
-        
-        // SOMA INTEGRAL: (Produto + Frete)
-        const totalGeral = precoProduto + valorFrete;
-        const valorPrestacao = totalGeral / 10;
-        const totalPixComDesconto = totalGeral * (1 - descontoPix);
-
-        const pNum = index + 1;
-        
-        // Atualiza a visualização do preço da peça
-        document.getElementById(`preco-base-p${pNum}`).innerText = `Peça: R$ ${precoProduto.toFixed(2).replace('.', ',')}`;
-
-        // Linha do valor do frete
-        const txtFrete = valorFrete === 0 ? "🚚 Valor do frete: A combinar / Grátis" : `🚚 Valor do frete para ${regiao} (${uf}): R$ ${valorFrete.toFixed(2).replace('.', ',')}`;
-        produto.querySelector('.info-frete-texto').innerText = txtFrete;
-
-        // Linha do Cartão parcelado baseado no total integral
-        document.getElementById(`linha-cartao-p${pNum}`).innerText = `Valor em 10x sem juros: R$ ${totalGeral.toFixed(2).replace('.', ',')} (10x de R$ ${valorPrestacao.toFixed(2).replace('.', ',')})`;
-        
-        // Linha do Pix com o desconto calculado sobre o total integral
-        document.getElementById(`linha-pix-p${pNum}`).innerText = `No Pix 10% de desconto: R$ ${totalPixComDesconto.toFixed(2).replace('.', ',')}`;
-
-        // Altera o link do botão único para enviar o valor somado exato para o Mercado Pago
-        const linkBaseCheckout = produto.getAttribute('data-link-cartao');
-        const btnComprar = produto.querySelector('.btn-comprar-unico');
-        
-        btnComprar.href = `${linkBaseCheckout}?pref_id=${SUA_PUBLIC_KEY}&amount=${totalGeral.toFixed(2)}`;
-    });
-}
-
-// VARIÁVEIS LOCAIS PARA CONTROLE DO CARROSSEL DE ZOOM
+// Lógica de Zoom mantida do seu script original
 let imagensProdutosLista = [];
 let indiceImagemAtual = 0;
-
-// LÓGICA DO ZOOM (LIGHTBOX) CORRIGIDA PARA RODAR APENAS DENTRO DO MESMO PRODUTO
 function abrirZoom(elementoImg) {
     const lightbox = document.getElementById('lightbox');
     const imagemZoom = document.getElementById('imagem-zoom');
-    
-    // Encontra o card do produto dono dessa imagem
     const cardProdutoPai = elementoImg.closest('.class-produto');
-    
-    // Captura apenas as imagens que estão DENTRO desse produto específico
-    const imagensDesteProduto = cardProdutoPai.querySelectorAll('img');
-    imagensProdutosLista = Array.from(imagensDesteProduto);
-    
-    // Descobre o índice da foto clicada dentro do grupo desse produto
+    imagensProdutosLista = Array.from(cardProdutoPai.querySelectorAll('img'));
     indiceImagemAtual = imagensProdutosLista.indexOf(elementoImg);
-    
-    // Alimenta o zoom com a foto atual
     imagemZoom.src = elementoImg.src;
-    imagemZoom.alt = elementoImg.alt;
-    
     lightbox.style.display = 'flex';
 }
-
-function mudarImagemZoom(direcao, evento) {
-    // Evita que o clique nas setas feche a janela
-    evento.stopPropagation();
-    
-    indiceImagemAtual += direcao;
-    
-    // Faz a rotação infinita presa apenas às fotos deste produto
-    if (indiceImagemAtual >= imagensProdutosLista.length) {
-        indiceImagemAtual = 0;
-    }
-    if (indiceImagemAtual < 0) {
-        indiceImagemAtual = imagensProdutosLista.length - 1;
-    }
-    
-    const novaImagem = imagensProdutosLista[indiceImagemAtual];
-    const imagemZoom = document.getElementById('imagem-zoom');
-    imagemZoom.src = novaImagem.src;
-    imagemZoom.alt = novaImagem.alt;
+function fecharZoom() { document.getElementById('lightbox').style.display = 'none'; }
+function mudarImagemZoom(dir, ev) {
+    ev.stopPropagation();
+    indiceImagemAtual += dir;
+    if (indiceImagemAtual >= imagensProdutosLista.length) indiceImagemAtual = 0;
+    if (indiceImagemAtual < 0) indiceImagemAtual = imagensProdutosLista.length - 1;
+    document.getElementById('imagem-zoom').src = imagensProdutosLista[indiceImagemAtual].src;
 }
-
-function fecharZoom() {
-    document.getElementById('lightbox').style.display = 'none';
-}
-
-
-// Inicializa a vitrine
-atualizarTodosOsProdutos(0, "", "");
 
 
 
