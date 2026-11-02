@@ -214,8 +214,7 @@ async function checkoutMercadoPago() {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json",
-                "ngrok-skip-browser-warning":" true"
-                
+                "ngrok-skip-browser-warning": "true"
             },
             body: JSON.stringify({
                 itens: carrinho, 
@@ -223,7 +222,7 @@ async function checkoutMercadoPago() {
             })
         });
 
-            // 1. Capta a resposta do seu PHP como texto puro e limpa espaços extras
+        // 1. Capta a resposta do seu PHP como texto puro e limpa espaços extras
         const textoResposta = await resposta.text();
         const linkLimpo = textoResposta.trim();
 
@@ -247,23 +246,7 @@ async function checkoutMercadoPago() {
                 alert("Falha ao processar o link de pagamento. Verifique o console.");
             }
         }
-        
-        //const textoPuro = await resposta.text();
-        //const dados = JSON.parse(textoPuro.trim()); // Limpa rebarbas do PHP e converte em JSON válido
-      
 
-        //if (dados && dados.init_point) {
-            //window.open(dados.init_point, "_blank");
-       //} else {
-            //console.error("Resposta do servidor:", dados);
-            //alert("Erro ao ler os dados de pagamento devolvidos pelo servidor.");
-       //}
-        //} catch (erro) {
-            //console.error("Erro na comunicação com o PHP:", erro);
-            //alert("Não foi possível conectar ao seu servidor PHP para fechar o pedido.");
-        //} finally {
-            //btn.innerText = "🔒 Fechar Pedido via Mercado Pago";
-            //btn.disabled = false;
     }
 }
 
