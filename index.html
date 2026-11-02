@@ -27,15 +27,24 @@
             <p style="color: #aaa; text-align: center; margin-top: 20px;">Seu carrinho está vazio.</p>
         </div>
 
-        <!-- Resumo de Valores -->
-        <div class="carrinho-footer">
+                <!-- Resumo de Valores -->
+            <div class="carrinho-footer">            
+            <!-- NOVO CAMPO PARA DIGITAR O CEP DENTRO DO CARRINHO -->
+            <div class="carrinho-cep-box" style="background: #1c1c1c; padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed #333;">
+                <label for="cep-carrinho" style="color: #aaa; font-size: 0.85em; display: block; margin-bottom: 5px; text-align: left;">Calcular Frete:</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="cep-carrinho" placeholder="00000-000" maxlength="9" oninput="monitorarDigitacaoCEP(this)" style="flex-grow: 1; padding: 8px; border-radius: 4px; background: #2b2b2b; color: #fff; border: 1px solid #444; font-size: 1em; text-align: center;">
+                </div>
+                <span id="carrinho-cep-erro" style="font-size: 0.8em; color: #ff4d4d; display: block; margin-top: 5px; text-align: left;"></span>
+            </div>
+
             <div class="carrinho-linha-resumo">
                 <span>Subtotal:</span>
                 <span id="cart-subtotal">R$ 0,00</span>
             </div>
             <div class="carrinho-linha-resumo">
-                <span id="cart-frete-txt">🚚 Frete (Aguardando CEP):</span>
-                <span id="cart-frete-valor">R$ 0,00</span>
+                <span id="cart-frete-txt">🚚 Frete:</span>
+                <span id="cart-frete-valor" style="font-weight: bold;">Por favor, digite o frete</span>
             </div>
             <div class="carrinho-linha-resumo total-destaque">
                 <span>Total Geral:</span>
@@ -48,9 +57,10 @@
 
             <!-- Botão Único de Finalização integrado com Mercado Pago -->
             <button id="btn-finalizar-checkout" class="btn-mercado-pago-checkout" onclick="checkoutMercadoPago()" disabled>
-                🔒 Fechar Pedido via Mercado Pago
+                ⚠️ Por favor, digite o frete para continuar
             </button>
         </div>
+
     </div>
 
     <!-- JANELA DE ZOOM COM ROTAÇÃO DE IMAGENS -->
