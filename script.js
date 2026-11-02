@@ -216,7 +216,7 @@ async function checkoutMercadoPago() {
     try {
         // Dispara a requisição direto para o seu servidor PHP atualizado
         // Se estiver testando via Ngrok, altere para a sua URL do Ngrok: https://.../loja/criar-pagamento.php
-        const resposta = await fetch("https://wriggle-scrounger-defense.ngrok-free.dev", {
+        const resposta = await fetch("https://wriggle-scrounger-defense.ngrok-free.dev/loja/criar-pagamento.php", {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json" 
