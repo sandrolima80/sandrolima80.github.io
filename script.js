@@ -233,17 +233,20 @@ async function checkoutMercadoPago() {
             window.open(urlFinal, "_blank");
         } else {
             // Caso o retorno não seja o link, tenta ler como objeto ou exibe no console para checagem
-            try {
-                const dados = JSON.parse(linkLimpo);
-                if (dados && dados.init_point) {
-                    window.open(dados.init_point, "_blank");
-                } else {
-                    alert("Erro ao ler o formato do link de checkout.");
-                }
-            } catch (e) {
-                console.error("Retorno bruto recebido:", linkLimpo);
-                alert("Falha ao processar o link de pagamento. Verifique o console.");
+        try {
+            const dados = JSON.parse(linkLimpo);
+            if (dados && dados.init_point) {
+                window.open(dados.init_point, "_blank");
+            } else {
+                // Se veio um JSON mas sem o init_point, mostra o que veio dentro
+                alert("JSON recebido sem link. Conteúdo: " + JSON.stringify(dados));
             }
+        } catch (e) {
+            // 🔥 NOVO: Se o PHP deu um echo errado, esse alerta vai te mostrar o texto exato!
+            alert("O PHP respondeu com o seguinte texto: " + linkLimpo);
+            console.error("Retorno bruto recebido:", linkLimpo);
+        }
+
         }
 
         
