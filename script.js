@@ -122,22 +122,32 @@ function descobrirEstadoPorCEP(cep) {
 }
 
 function monitorarDigitacaoCEP(input) {
-    let v = input.value.replace(/\D/g, "");
-    if (v.length > 5) input.value = v.substring(0, 5) + "-" + v.substring(5, 8);
-    else input.value = v;
+    // 1. Cria uma variável limpa apenas com os números digitados
+    let apenasNumeros = input.value.replace(/\D/g, "");
+    
+    // 2. Aplica a máscara visual de hífen no campo de texto
+    if (apenasNumeros.length > 5) {
+        input.value = apenasNumeros.substring(0, 5) + "-" + apenasNumeros.substring(5, 8);
+    } else {
+        input.value = apenasNumeros;
+    }
 
-    if (v.length === 8) {
-        const loc = descobrirEstadoPorCEP(v);
+    // 3. Importante: Testa o comprimento da variável APENAS com números (deve ser 8)
+    if (apenasNumeros.length === 8) {
+        const loc = descobrirEstadoPorCEP(apenasNumeros);
         ufGlobal = loc ? loc.uf : 'SP';
-        estadoSelecionadoTxt = loc ? `${loc.regiao} (${loc.uf})` : 'Brasil';
-        valorFreteGlobal = tabelaFretePorEstado[ufGlobal] || 35.00;
+        estadoSelecionadoTxt = loc ? `${loc.regiao} (${loc.uf})` : 'São Paulo (SP)';
+        valorFreteGlobal = tabelaFretePorEstado[ufGlobal] || 15.00;
         
+        // Atualiza o carrinho e destrava a tela fechando o modal
         atualizarRenderizacaoCarrinho();
         document.getElementById('modal-cep').style.display = 'none';
     } else {
+        document.getElementById('modal-erro').style.color = "#ff4d4d"; // Muda para vermelho para indicar digitação
         document.getElementById('modal-erro').innerText = "Digitando... (insira os 8 dígitos)";
     }
 }
+
 
 function pularCep() {
     valorFreteGlobal = 0;
