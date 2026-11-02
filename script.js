@@ -46,18 +46,13 @@ function atualizarRenderizacaoCarrinho() {
     
        contador.innerText = Array.isArray(carrinho) ? carrinho.reduce((acc, item) => acc + item.quantidade, 0) : 0;
 
-    if (!carrinho || carrinho.length === 0) {
-        if (listaHtml) listaHtml.innerHTML = `<p style="color: #aaa; text-align: center; margin-top: 20px;">Seu carrinho está vazio.</p>`;
+   if (!carrinho || carrinho.length === 0) {
+        listaHtml.innerHTML = `<p style="color: #aaa; text-align: center; margin-top: 20px;">Seu carrinho está vazio.</p>`;
         document.getElementById("cart-subtotal").innerText = "R$ 0,00";
         document.getElementById("cart-total-geral").innerText = "R$ 0,00";
         document.getElementById("cart-total-pix").innerText = "R$ 0,00";
-        
-        const btnCheckout = document.getElementById("btn-finalizar-checkout");
-        if (btnCheckout) {
-            btnCheckout.disabled = true;
-            btnCheckout.innerText = "🔒 Carrinho Vazio";
-            btnCheckout.style.backgroundColor = "#555";
-        }
+        document.getElementById("btn-finalizar-checkout").disabled = true;
+        document.getElementById("btn-finalizar-checkout").innerText = "🔒 Carrinho Vazio";
         return;
     }
 
