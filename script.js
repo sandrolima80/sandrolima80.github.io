@@ -245,8 +245,8 @@ async function checkoutMercadoPago() {
             //alert("Erro ao ler os dados de pagamento devolvidos pelo servidor.");
        }
         } catch (erro) {
-            //console.error("Erro na comunicação com o PHP:", erro);
-            //alert("Não foi possível conectar ao seu servidor PHP para fechar o pedido.");
+            console.error("Erro na comunicação com o PHP:", erro);
+            alert("Não foi possível conectar ao seu servidor PHP para fechar o pedido.");
         } finally {
             btn.innerText = "🔒 Fechar Pedido via Mercado Pago";
             btn.disabled = false;
