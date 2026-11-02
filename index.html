@@ -5,93 +5,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rota Réplicas - Peças e Customizações 1:14</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
-
-
+    <script src="script.js" defer></script>
 </head> 
 <body>
 
-            <!-- JANELA DE ZOOM COM ROTAÇÃO DE IMAGENS (CORRIGIDO) -->
-    <div class="lightbox-overlay" id="lightbox" onclick="fecharZoom()">
-        <!-- Botão Esquerda -->
-        <button class="lightbox-btn" id="btn-ant" onclick="mudarImagemZoom(-1, event)" style="position: absolute; left: 20px; background: none; border: none; color: white; font-size: 3.5em; cursor: pointer; z-index: 10001; font-weight: bold; text-shadow: 0 0 10px rgba(0,0,0,0.8);">&lsaquo;</button>
-        
-        <img id="imagem-zoom" src="" alt="Imagem Expandida" onclick="event.stopPropagation()">
-        
-        <!-- Botão Direita -->
-        <button class="lightbox-btn" id="btn-prox" onclick="mudarImagemZoom(1, event)" style="position: absolute; right: 20px; background: none; border: none; color: white; font-size: 3.5em; cursor: pointer; z-index: 10001; font-weight: bold; text-shadow: 0 0 10px rgba(0,0,0,0.8);">&rsaquo;</button>
+    <!-- BOTÃO FLUTUANTE DO CARRINHO (Abre a lateral) -->
+    <div class="carrinho-icone-flutuante" onclick="alternarCarrinho(true)">
+        🛒 <span id="carrinho-contador">0</span>
     </div>
 
+    <!-- JANELA DO CARRINHO LATERAL (Escondida por padrão) -->
+    <div class="carrinho-lateral" id="carrinho-menu">
+        <div class="carrinho-header">
+            <h3>Seu Carrinho</h3>
+            <button class="btn-fechar-carrinho" onclick="alternarCarrinho(false)">&times;</button>
+        </div>
+        
+        <!-- Lista de Itens Dinâmica -->
+        <div class="carrinho-itens" id="carrinho-itens-lista">
+            <!-- Inserido via JS -->
+            <p style="color: #aaa; text-align: center; margin-top: 20px;">Seu carrinho está vazio.</p>
+        </div>
 
-        <!-- JANELA DE SOLICITAÇÃO DE CEP (CORRIGIDA) -->
-    <div class="modal-cep-overlay" id="modal-cep" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0b0b0b; display: flex; justify-content: center; align-items: center; z-index: 9999;">
-        <div class="modal-cep-content" style="background-color: #1a1a1a; border: 2px solid #333; border-radius: 12px; padding: 30px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.7);">
-            <h2>Bem-vindo à Rota Réplicas</h2>
-            <p>Digite seu CEP para calcular o frete e somar aos produtos automaticamente.</p>
-            <input type="text" id="cep-inicial" placeholder="00000-000" maxlength="9" oninput="monitorarDigitacaoCEP(this)" style="width: 80%; padding: 12px; border-radius: 8px; background-color: #2b2b2b; color: #fff; border: 1px solid #444; font-size: 1.3em; text-align: center; letter-spacing: 2px; margin-bottom: 15px;">
-            <span class="modal-status" id="modal-erro" style="font-size: 0.9em; color: #aaa; display: block; min-height: 20px;">Aguardando CEP...</span>
-            <button type="button" class="btn-pular" onclick="pularCep()" style="display: block; margin: 15px auto 0 auto; background: none; border: none; color: #009ee3; cursor: pointer; text-decoration: underline; font-size: 1em; font-weight: bold;">Visualizar catálogo sem frete</button>
+        <!-- Resumo de Valores -->
+        <div class="carrinho-footer">
+            <div class="carrinho-linha-resumo">
+                <span>Subtotal:</span>
+                <span id="cart-subtotal">R$ 0,00</span>
+            </div>
+            <div class="carrinho-linha-resumo">
+                <span id="cart-frete-txt">🚚 Frete (Aguardando CEP):</span>
+                <span id="cart-frete-valor">R$ 0,00</span>
+            </div>
+            <div class="carrinho-linha-resumo total-destaque">
+                <span>Total Geral:</span>
+                <span id="cart-total-geral">R$ 0,00</span>
+            </div>
+            <div class="carrinho-linha-resumo pix-destaque">
+                <span>No Pix (10% OFF):</span>
+                <span id="cart-total-pix">R$ 0,00</span>
+            </div>
+
+            <!-- Botão Único de Finalização integrado com Mercado Pago -->
+            <button id="btn-finalizar-checkout" class="btn-mercado-pago-checkout" onclick="checkoutMercadoPago()" disabled>
+                🔒 Fechar Pedido via Mercado Pago
+            </button>
         </div>
     </div>
 
+    <!-- JANELA DE ZOOM COM ROTAÇÃO DE IMAGENS -->
+    <div class="lightbox-overlay" id="lightbox" onclick="fecharZoom()">
+        <button class="lightbox-btn" id="btn-ant" onclick="mudarImagemZoom(-1, event)">&lsaquo;</button>
+        <img id="imagem-zoom" src="" alt="Imagem Expandida" onclick="event.stopPropagation()">
+        <button class="lightbox-btn" id="btn-prox" onclick="mudarImagemZoom(1, event)">&rsaquo;</button>
+    </div>
 
-     <!-- CONTEÚDO PRINCIPAL DO SITE -->
-        <!-- CABEÇALHO COM NOTA DE SEGURANÇA MERCADO PAGO -->
-        <!-- CABEÇALHO COM NOTA DE SEGURANÇA MERCADO PAGO -->
+    <!-- JANELA DE SOLICITAÇÃO DE CEP -->
+    <div class="modal-cep-overlay" id="modal-cep">
+        <div class="modal-cep-content">
+            <h2>Bem-vindo à Rota Réplicas</h2>
+            <p>Digite seu CEP para calcular o frete da sua entrega.</p>
+            <input type="text" id="cep-inicial" placeholder="00000-000" maxlength="9" oninput="monitorarDigitacaoCEP(this)">
+            <span class="modal-status" id="modal-erro">Aguardando CEP...</span>
+            <button type="button" class="btn-pular" onclick="pularCep()">Visualizar catálogo sem frete</button>
+        </div>
+    </div>
+
+    <!-- CABEÇALHO -->
     <header>
         <img src="logo.png" alt="Rota Réplicas Logo">
         <h1>Rota Réplicas</h1>
         <p>Peças exclusivas e alta customização na escala 1:14</p>
         
-        <!-- Bloco de segurança adicionado após a logo -->
-        <div style="background-color: #161616; border: 1px solid #009ee3; border-radius: 8px; padding: 15px; max-width: 500px; margin: 20px auto 0 auto; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
-            <p style="margin: 0 0 8px 0; color: #fff; font-weight: bold; font-size: 1.05em; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                🛡️ Pagamento Seguro via Mercado Pago
-            </p>
-            <p style="margin: 0; color: #aaa; font-size: 0.9em; line-height: 1.4;">
-                Sua compra está totalmente protegida! Suportamos Pix com desconto à vista ou parcelamento em até 10x sem juros no cartão de crédito com o ecossistema e a segurança do <span style="color: #009ee3; font-weight: bold;">Mercado Pago</span>.
-            </p>
+        <div class="badge-seguranca-mp">
+            <p><strong>🛡️ Pagamento Seguro via Mercado Pago</strong></p>
+            <p>Suportamos Pix com 10% OFF ou até 10x sem juros no cartão com a tecnologia do Mercado Pago.</p>
         </div>
     </header>
 
+    <!-- CATÁLOGO -->
+    <main class="catalogo" translate="no">
 
-
-               <main class="catalogo" translate="no">
-
-        <!-- PRODUTO 1: TANQUE DE COMBUSTÍVEL -->
-        <div class="produto-card class-produto" 
-             data-preco="100.00"> 
-             <!--data-link-cartao="https://mercadopago.com.br"-->
+        <!-- PRODUTO 1 -->
+        <div class="produto-card class-produto" data-id="tanque-cromado" data-preco="100.00">
             <div>
                 <div class="container-foto-catalogo">
                     <span class="seta-visual visual-esquerda">&lsaquo;</span>
                     <img src="tanque_combustivel-1.jpg" alt="Tanque Cromado 1:14" onclick="abrirZoom(this)">
                     <span class="seta-visual visual-direita">&rsaquo;</span>
-                    
-                    <img src="tanque_combustivel-2.jpg" alt="Tanque Cromado 1:14 - Foto 2" onclick="abrirZoom(this)">
-                    
+                    <img src="tanque_combustivel-2.jpg" alt="Tanque Cromado 1:14 - Foto 2" style="display:none;">
                 </div>
                 <h2>Tanque de Combustível Cromado - Escala 1:14</h2>
-                <p class="descricao">Fabricado em ABS de alta resistência com acabamento cromado espelhado de alto brilho. Acompanha suportes em cinta flexível (TPU) e parafusos reais.</p>
+                <p class="descricao">ABS de alta resistência com acabamento cromado de alto brilho. Acompanha suportes em cinta flexível.</p>
             </div>
             <div>
-                <!-- Preço Base com Borda de Linha Sólida -->
-                <div class="preco-base-badge" id="preco-base-p1">Peça: R$ 100,00</div>
-
-                <!-- Linhas de detalhes na ordem solicitada -->
-                <div class="info-frete-card info-frete-texto">🚚 Frete...</div>
-                <div class="detalhe-preco-linha" id="linha-cartao-p1">Valor em 10x sem juros: R$ 100,00</div>
-                <div class="detalhe-preco-linha" id="linha-pix-p1">No Pix 10% de desconto: R$ 90,00</div>
-
-                <!-- Botão Único Direto sem seletores complexos -->
-                <a href="#" target="_blank" class="btn-mercado-pago btn-comprar-unico" style="background-color: #009ee3; margin-top: 10px;">🛒 Comprar</a>
+                <div class="preco-base-badge">R$ 100,00</div>
+                <button type="button" class="btn-adicionar-carrinho" onclick="adicionarAoCarrinho('tanque-cromado', 'Tanque Cromado 1:14', 100.00, 'tanque_combustivel-1.jpg')">
+                    🛒 Adicionar ao Carrinho
+                </button>
             </div>
         </div>
 
-        <!-- PRODUTO 2: PAR DE PARA-LAMAS -->
-        <div class="produto-card class-produto" 
-             data-preco="85.00" 
-             data-link-cartao="https://mercadopago.com.br">
+        <!-- PRODUTO 2 -->
+        <div class="produto-card class-produto" data-id="paralamas-traseiros" data-preco="85.00">
             <div>
                 <div class="container-foto-catalogo">
                     <span class="seta-visual visual-esquerda">&lsaquo;</span>
@@ -99,29 +115,24 @@
                     <span class="seta-visual visual-direita">&rsaquo;</span>
                 </div>
                 <h2>Par de Para-lamas Traseiros - Escala 1:14</h2>
-                <p class="descricao">Modelagem exclusiva com acabamento fosco realista. Compatível com chassi padrão Tamiya. Alta flexibilidade para aguentar impactos.</p>
+                <p class="descricao">Modelagem fosca realista compatível com padrão Tamiya. Alta flexibilidade contra impactos.</p>
             </div>
             <div>
-                <div class="preco-base-badge" id="preco-base-p2">Peça: R$ 85,00</div>
-
-                <div class="info-frete-card info-frete-texto">🚚 Frete...</div>
-                <div class="detalhe-preco-linha" id="linha-cartao-p2">Valor em 10x sem juros: R$ 85,00</div>
-                <div class="detalhe-preco-linha" id="linha-pix-p2">No Pix 10% de desconto: R$ 76,50</div>
-
-                <a href="#" target="_blank" class="btn-mercado-pago btn-comprar-unico" style="background-color: #009ee3; margin-top: 10px;">🛒 Comprar</a>
+                <div class="preco-base-badge">R$ 85,00</div>
+                <button type="button" class="btn-adicionar-carrinho" onclick="adicionarAoCarrinho('paralamas-traseiros', 'Par de Para-lamas 1:14', 85.00, 'paralamas-114.jpg')">
+                    🛒 Adicionar ao Carrinho
+                </button>
             </div>
         </div>
 
     </main>
 
-
-
-
     <footer>
         <p>&copy; 2026 Rota Réplicas. Todos os direitos reservados.</p>
         <p>Catálogo Oficial e Seguro.</p>
     </footer>
-  </body>
-</html>  
+</body>
+</html>
+
    
 
