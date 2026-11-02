@@ -11,11 +11,14 @@ const tabelaFretePorEstado = {
     'AM': 55.00, 'PA': 55.00, 'AC': 55.00, 'RO': 55.00, 'RR': 55.00, 'AP': 55.00, 'TO': 48.00
 };
 
+
 // CONTROLE DA INTERFACE DO CARRINHO
 function alternarCarrinho(abrir) {
     const menu = document.getElementById("carrinho-menu");
-    if (abrir) menu.classList.add("aberto");
-    else menu.classList.remove("aberto");
+    if (menu) {
+        if (abrir) menu.classList.add("aberto");
+        else menu.classList.remove("aberto");
+    }
 }
 
 // ADICIONAR ITEM AO CARRINHO
