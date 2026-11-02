@@ -14,9 +14,8 @@ const tabelaFretePorEstado = {
 // CONTROLE DA INTERFACE DO CARRINHO
 function alternarCarrinho(abrir) {
     const menu = document.getElementById("carrinho-menu");
-    if (menu) {
-        if (abrir) menu.classList.add("aberto");
-        else menu.classList.remove("aberto");
+    if (abrir) menu.classList.add("aberto");
+    else menu.classList.remove("aberto");
     }
 }
 
