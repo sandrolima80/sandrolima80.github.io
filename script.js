@@ -220,6 +220,7 @@ async function checkoutMercadoPago() {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json" 
+                 "ngrok-skip-browser-warning": "true" // 🔥 ISSO PULA A TELA DE AVISO DO NGROK!
             },
             body: JSON.stringify({
                 itens: carrinho, // Envia o array com id, titulo, preco e quantidade
