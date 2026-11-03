@@ -213,7 +213,8 @@ async function checkoutMercadoPago() {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json",
-                "ngrok-skip-browser-warning": "true"
+                "ngrok-skip-browser-warning":" true"
+                
             },
             body: JSON.stringify({
                 itens: carrinho, 
@@ -221,42 +222,25 @@ async function checkoutMercadoPago() {
             })
         });
 
-        // 1. Capta a resposta do seu PHP como texto puro e limpa espaços extras
-        const textoResposta = await resposta.text();
-        const linkLimpo = textoResposta.trim();
-
-        // 2. Se a resposta contiver o link oficial do Mercado Pago, redireciona o cliente na hora!
-        if (linkLimpo.includes("mercadopago.com")) {
-            // Se o link vier envelopado em aspas ou chaves por engano, limpa os caracteres extras
-            const urlFinal = linkLimpo.replace(/[^a-zA-Z0-9\s.:?=\/&_-]/g, "").trim();
-            
-            window.open(urlFinal, "_blank");
-        } else {
-            // Caso o retorno não seja o link, tenta ler como objeto ou exibe no console para checagem
-        try {
-            const dados = JSON.parse(linkLimpo);
-            if (dados && dados.init_point) {
-                window.open(dados.init_point, "_blank");
-            } else {
-                // Se veio um JSON mas sem o init_point, mostra o que veio dentro
-                alert("JSON recebido sem link. Conteúdo: " + JSON.stringify(dados));
-            }
-        } catch (e) {
-            // 🔥 NOVO: Se o PHP deu um echo errado, esse alerta vai te mostrar o texto exato!
-            alert("O PHP respondeu com o seguinte texto: " + linkLimpo);
-            console.error("Retorno bruto recebido:", linkLimpo);
-        }
-
-        }
-
+          
         
+        const textoPuro = await resposta.text();
+        const dados = JSON.parse(textoPuro.trim()); // Limpa rebarbas do PHP e converte em JSON válido
+      
+
+        if (dados && dados.init_point) {
+            window.open(dados.init_point, "_blank");
+       } else {
+            console.error("Resposta do servidor:", dados);
+            alert("Erro ao ler os dados de pagamento devolvidos pelo servidor.");
+       }
         } catch (erro) {
             console.error("Erro na comunicação com o PHP:", erro);
             alert("Não foi possível conectar ao seu servidor PHP para fechar o pedido.");
         } finally {
             btn.innerText = "🔒 Fechar Pedido via Mercado Pago";
             btn.disabled = false;
-        }
+    }
 }
 
 // Lógica de Zoom mantida do seu script original
